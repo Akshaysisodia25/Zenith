@@ -263,6 +263,9 @@
                 videoStream.getTracks().forEach(function(track) {
                     pc.addTrack(track, videoStream);
                 });
+            } else {
+                // Ensure we negotiate to receive video even if we aren't sending
+                pc.addTransceiver('video', { direction: 'recvonly' });
             }
 
             // Handle remote stream
@@ -802,8 +805,8 @@
         // ===== CAMERA AUTO-REQUEST =====
         async function initCamera() {
             if (!cameraRequired) {
-                // Non-camera mode — hide the entire video section
-                document.getElementById('videoSection').style.display = 'none';
+                // Non-camera mode — just return, don't hide the video section 
+                // so we can still see other peers' videos
                 return;
             }
             try {
