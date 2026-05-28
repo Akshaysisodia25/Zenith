@@ -78,39 +78,15 @@
         </div>
     </header>
 
-    <!-- Video Section -->
-    <div class="video-section" id="videoSection">
-        <div class="video-header">
-            <h3 class="section-heading">
-                <span class="heading-icon">📹</span>
-                Focus Cam
-            </h3>
-            <button class="video-toggle-btn" id="videoToggle" onclick="toggleVideo()">
-                <span id="videoToggleText">Turn On Camera</span>
-            </button>
-        </div>
-        <div class="video-grid" id="videoGrid">
-            <!-- Self video -->
-            <div class="video-card self-video" id="selfVideoCard">
-                <video class="video-element" id="selfVideo" autoplay muted playsinline></video>
-                <div class="video-overlay">
-                    <span class="video-name" id="selfVideoName">You</span>
-                    <span class="video-status" id="selfVideoStatus">Camera Off</span>
-                </div>
-                <div class="video-placeholder" id="selfPlaceholder">
-                    <div class="video-placeholder-avatar" id="selfPlaceholderAvatar">Y</div>
-                    <p>Camera is off</p>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <!-- Main -->
     <main class="session-main">
         <div class="participants-section">
             <h3 class="section-heading">
                 <span class="heading-icon">👥</span>
                 Focus Partners
+                <button class="video-toggle-btn" id="videoToggle" onclick="toggleVideo()">
+                    <span id="videoToggleText">Turn On Camera</span>
+                </button>
                 <span class="participant-count" id="participantCount">1/10</span>
             </h3>
             <div class="participants-grid" id="participantsGrid"></div>
@@ -176,9 +152,6 @@
         document.getElementById('sessionName').textContent = myName;
         document.getElementById('sessionGoal').textContent = sessionGoalText;
         document.getElementById('sessionType').textContent = sessionTypeText;
-        document.getElementById('selfVideoName').textContent = myName + ' (You)';
-        document.getElementById('selfPlaceholderAvatar').textContent = myName.charAt(0).toUpperCase();
-
         if (roomCode) {
             document.getElementById('roomCodeWrap').style.display = 'flex';
             document.getElementById('roomCodeDisplay').textContent = roomCode;
@@ -202,14 +175,15 @@
         // 1. Go to supabase.com → New Project
         // 2. Project Settings → API
         // 3. Copy "Project URL" and "anon public" key here
-        const SUPABASE_URL = 'https://tseagsdutcihhisxyuur.supabase.co';
-        const SUPABASE_ANON_KEY = 'sb_publishable_qq98Hby7TwYNHxvUc8O3hA_Tybhi6OX';
+        const SUPABASE_URL = 'https://ghmhqlfmxdxebcuqzior.supabase.co';
+        const SUPABASE_ANON_KEY = 'sb_publishable_btGsxzju4OTmHRV--VhglQ_NTqEEgJh';
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
         // WebRTC peers: { peerId: RTCPeerConnection }
         let peers = {};
-        // Remote video elements: { peerId: videoElement }
+        // Remote media: { peerId: HTMLVideoElement | MediaStream }
         let remoteVideos = {};
+        let remoteStreams = {};
 
         // Participants
         let participants = [];
@@ -304,39 +278,18 @@
         }
 
         function createRemoteVideo(peerId, stream) {
-            const grid = document.getElementById('videoGrid');
-            const card = document.createElement('div');
-            card.className = 'video-card remote-video';
-            card.id = 'video-' + peerId;
-            card.innerHTML =
-                '<video class="video-element" autoplay playsinline style="display:block;"></video>' +
-                '<div class="video-overlay">' +
-                    '<span class="video-name">Peer</span>' +
-                    '<span class="video-status" style="color:#8ab8a0;">Live</span>' +
-                '</div>';
-            grid.appendChild(card);
-
-            const video = card.querySelector('video');
-            video.srcObject = stream;
-            remoteVideos[peerId] = video;
-
-            // Update name from participants list
-            const p = participants.find(function(x) { return x.id === peerId; });
-            if (p) {
-                card.querySelector('.video-name').textContent = p.name;
-            }
+            remoteStreams[peerId] = stream;
+            renderParticipants();
         }
 
         function removeRemoteVideo(peerId) {
-            const card = document.getElementById('video-' + peerId);
-            if (card) {
-                const video = card.querySelector('video');
-                if (video && video.srcObject) {
-                    video.srcObject.getTracks().forEach(function(t) { t.stop(); });
-                }
-                card.remove();
+            const stream = remoteStreams[peerId];
+            if (stream) {
+                stream.getTracks().forEach(function(t) { t.stop(); });
             }
+            delete remoteStreams[peerId];
             delete remoteVideos[peerId];
+            renderParticipants();
         }
 
         // ===== SIGNALING (Supabase Realtime Broadcast) =====
@@ -419,11 +372,47 @@
             }
         }
 
+        async function renegotiatePeer(peerId) {
+            const pc = peers[peerId];
+            if (!pc || pc.signalingState !== 'stable') return;
+
+            try {
+                const offer = await pc.createOffer();
+                await pc.setLocalDescription(offer);
+                sendSignal({ type: 'offer', target: peerId, sender: myId, offer: offer });
+            } catch(err) {
+                console.warn('renegotiatePeer failed for', peerId, err);
+            }
+        }
+
+        function publishLocalStreamToPeers() {
+            if (!videoStream) return;
+
+            Object.keys(peers).forEach(function(peerId) {
+                const pc = peers[peerId];
+                let shouldRenegotiate = false;
+
+                videoStream.getTracks().forEach(function(track) {
+                    const existingSender = pc.getSenders().find(function(sender) {
+                        return sender.track && sender.track.kind === track.kind;
+                    });
+
+                    if (existingSender) {
+                        existingSender.replaceTrack(track);
+                    } else {
+                        pc.addTrack(track, videoStream);
+                        shouldRenegotiate = true;
+                    }
+                });
+
+                if (shouldRenegotiate) {
+                    renegotiatePeer(peerId);
+                }
+            });
+        }
+
         // ===== VIDEO CAMERA =====
         async function toggleVideo() {
-            const video = document.getElementById('selfVideo');
-            const placeholder = document.getElementById('selfPlaceholder');
-            const status = document.getElementById('selfVideoStatus');
             const btn = document.getElementById('videoToggle');
             const btnText = document.getElementById('videoToggleText');
 
@@ -446,23 +435,24 @@
                     videoStream.getTracks().forEach(function(track) { track.stop(); });
                     videoStream = null;
                 }
-                video.srcObject = null;
-                video.style.display = 'none';
-                placeholder.style.display = 'flex';
-                status.textContent = 'Camera Off';
-                status.style.color = 'var(--text-muted)';
                 btnText.textContent = 'Turn On Camera';
                 btn.classList.remove('active');
                 isVideoOn = false;
+                renderParticipants();
 
                 // Remove tracks from all peer connections
                 Object.keys(peers).forEach(function(peerId) {
                     const pc = peers[peerId];
+                    let shouldRenegotiate = false;
                     pc.getSenders().forEach(function(sender) {
                         if (sender.track) {
                             pc.removeTrack(sender);
+                            shouldRenegotiate = true;
                         }
                     });
+                    if (shouldRenegotiate) {
+                        renegotiatePeer(peerId);
+                    }
                 });
             }
         }
@@ -531,7 +521,10 @@
             const existing = participants.find(function(p) { return p.id === data.id; });
             if (existing) {
                 existing.lastSeen = Date.now();
-                if (data.name) existing.name = data.name;
+                if (data.name && existing.name !== data.name) {
+                    existing.name = data.name;
+                    renderParticipants();
+                }
             } else {
                 participants.push({
                     id: data.id,
@@ -546,12 +539,6 @@
                 if (!peers[data.id] && myId > data.id) {
                     initiateConnection(data.id);
                 }
-            }
-
-            // Update remote video name if exists
-            const videoCard = document.getElementById('video-' + data.id);
-            if (videoCard) {
-                videoCard.querySelector('.video-name').textContent = data.name || 'Peer';
             }
         }
 
@@ -598,13 +585,22 @@
             let html = '';
 
             participants.forEach(function(p, i) {
-                html += '<div class="participant-card ' + p.status + '" style="animation-delay: ' + (i * 0.08) + 's">' +
+                const hasVideo = p.id === myId ? isVideoOn : !!remoteStreams[p.id];
+                const cameraClass = hasVideo ? ' camera-on' : '';
+                const statusText = p.id === myId
+                    ? (isVideoOn ? 'Live' : 'Camera Off')
+                    : (hasVideo ? 'Live' : 'Focused');
+                html += '<div class="participant-card ' + p.status + cameraClass + '" id="participant-' + p.id + '" style="animation-delay: ' + (i * 0.08) + 's">' +
+                    '<video class="partner-video" data-peer-id="' + p.id + '" autoplay ' + (p.id === myId ? 'muted ' : '') + 'playsinline></video>' +
                     '<div class="participant-avatar">' +
                         '<span>' + p.avatar + '</span>' +
                         '<div class="status-indicator ' + p.status + '"></div>' +
                     '</div>' +
-                    '<div class="participant-name">' + p.name + '</div>' +
-                    '<div class="participant-status">' + (p.status === 'you' ? 'You' : 'Focused') + '</div>' +
+                    '<div class="participant-video-shade"></div>' +
+                    '<div class="participant-info">' +
+                        '<div class="participant-name">' + p.name + (p.id === myId ? ' (You)' : '') + '</div>' +
+                        '<div class="participant-status">' + statusText + '</div>' +
+                    '</div>' +
                 '</div>';
             });
 
@@ -621,6 +617,24 @@
 
             grid.innerHTML = html;
             document.getElementById('participantCount').textContent = participants.length + '/' + maxSlots;
+            attachParticipantVideos();
+        }
+
+        function attachParticipantVideos() {
+            const selfVideo = document.querySelector('.partner-video[data-peer-id="' + myId + '"]');
+            if (selfVideo && videoStream) {
+                selfVideo.srcObject = videoStream;
+                selfVideo.style.display = 'block';
+            }
+
+            Object.keys(remoteStreams).forEach(function(peerId) {
+                const video = document.querySelector('.partner-video[data-peer-id="' + peerId + '"]');
+                if (video) {
+                    video.srcObject = remoteStreams[peerId];
+                    video.style.display = 'block';
+                    remoteVideos[peerId] = video;
+                }
+            });
         }
 
         // ===== TIMER =====
@@ -825,13 +839,7 @@
         }
 
         function applyStream(stream) {
-            const video = document.getElementById('selfVideo');
             videoStream = stream;
-            video.srcObject = stream;
-            video.style.display = 'block';
-            document.getElementById('selfPlaceholder').style.display = 'none';
-            document.getElementById('selfVideoStatus').textContent = 'Live';
-            document.getElementById('selfVideoStatus').style.color = '#8ab8a0';
             isVideoOn = true;
 
             const btn = document.getElementById('videoToggle');
@@ -842,6 +850,8 @@
                 document.getElementById('videoToggleText').textContent = 'Turn Off Camera';
                 btn.classList.add('active');
             }
+            publishLocalStreamToPeers();
+            renderParticipants();
         }
 
         // ===== INIT =====

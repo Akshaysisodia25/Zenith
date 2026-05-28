@@ -1,6 +1,6 @@
 const { createClient } = require('@supabase/supabase-js');
-const SUPABASE_URL = 'https://tseagsdutcihhisxyuur.supabase.co';
-const SUPABASE_ANON_KEY = 'sb_publishable_qq98Hby7TwYNHxvUc8O3hA_Tybhi6OX';
+const SUPABASE_URL = 'https://ghmhqlfmxdxebcuqzior.supabase.co';
+const SUPABASE_ANON_KEY = 'sb_publishable_btGsxzju4OTmHRV--VhglQ_NTqEEgJh';
 const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 const channel = supabase.channel('test_room', {
