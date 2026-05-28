@@ -157,11 +157,21 @@
         // ===== SESSION SETUP =====
         const urlParams = new URLSearchParams(window.location.search);
         const roomCode = urlParams.get('room');
-        const myName = urlParams.get('name') || 'You';
-        const sessionGoalText = urlParams.get('goal') || 'Deep Focus Session';
-        const sessionTypeText = urlParams.get('type') || 'Study';
-        const duration = parseInt(urlParams.get('duration')) || 60;
-        const cameraRequired = urlParams.get('cam') === 'on';
+        
+        let configStr = sessionStorage.getItem('zenith_session_config');
+        let config = {};
+        if (configStr) {
+            config = JSON.parse(configStr);
+        } else if (roomCode) {
+            // Joined via naked link without session setup
+            window.location.href = 'rooms.html?join=' + roomCode;
+        }
+
+        const myName = config.name || urlParams.get('name') || 'You';
+        const sessionGoalText = config.goal || urlParams.get('goal') || 'Deep Focus Session';
+        const sessionTypeText = config.type || urlParams.get('type') || 'Study';
+        const duration = parseInt(config.duration || urlParams.get('duration')) || 60;
+        const cameraRequired = (config.cam || urlParams.get('cam')) === 'on';
 
         document.getElementById('sessionName').textContent = myName;
         document.getElementById('sessionGoal').textContent = sessionGoalText;
@@ -340,7 +350,7 @@
 
             if (data.type === 'join') {
                 // Peer announced camera on — connect so we receive their stream
-                if (!peers[data.sender]) {
+                if (!peers[data.sender] && myId > data.sender) {
                     initiateConnection(data.sender);
                 }
             } else if (data.type === 'offer') {
@@ -530,7 +540,7 @@
                 renderParticipants();
 
                 // If I have camera on, initiate WebRTC with new peer
-                if (isVideoOn && !peers[data.id]) {
+                if (!peers[data.id] && myId > data.id) {
                     initiateConnection(data.id);
                 }
             }
@@ -784,7 +794,7 @@
             sendSignal({ type: 'join', sender: myId, name: myName });
             setTimeout(function() {
                 participants.forEach(function(p) {
-                    if (p.id !== myId && !peers[p.id]) initiateConnection(p.id);
+                    if (p.id !== myId && !peers[p.id] && myId > p.id) initiateConnection(p.id);
                 });
             }, 1500);
         }

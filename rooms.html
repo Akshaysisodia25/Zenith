@@ -298,29 +298,30 @@
             const cameraMode = document.querySelector('input[name="cameraMode"]:checked').value;
             const roomCode = 'ZEN-' + Math.random().toString(36).substr(2, 4).toUpperCase();
 
-            const params = new URLSearchParams({
+            const config = {
                 name: name,
                 goal: goal,
                 type: currentRoomType,
                 duration: duration,
-                room: roomCode,
                 cam: cameraMode
-            });
-            window.location.href = 'session.html?' + params.toString();
+            };
+            sessionStorage.setItem('zenith_session_config', JSON.stringify(config));
+            window.location.href = 'session.html?room=' + roomCode;
         }
 
         function joinFriendSession(event) {
             event.preventDefault();
             const name = document.getElementById('joinName').value;
             const code = document.getElementById('joinCode').value.toUpperCase();
-            const params = new URLSearchParams({
+            const config = {
                 name: name,
                 goal: 'Group Focus Session',
                 type: 'Friend',
                 duration: 60,
-                room: code
-            });
-            window.location.href = 'session.html?' + params.toString();
+                cam: 'off' // Joiners can decide to turn it on later
+            };
+            sessionStorage.setItem('zenith_session_config', JSON.stringify(config));
+            window.location.href = 'session.html?room=' + code;
         }
 
         // ===== REAL-TIME EXP RENDERING =====
@@ -408,6 +409,16 @@
                 document.body.style.overflow = '';
             }
         });
+
+        // Handle joining from a shared link
+        window.onload = function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const joinCode = urlParams.get('join');
+            if (joinCode) {
+                document.getElementById('joinCode').value = joinCode;
+                openJoinModal();
+            }
+        };
     </script>
 
 </body>
