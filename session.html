@@ -1,13 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Zenith - Focus Room</title>
     <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Inter:wght@300;400;500;600&display=swap"
+        rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
+
 <body class="session-body">
 
     <!-- Background -->
@@ -24,12 +28,33 @@
 
     <!-- Tab Switch Warning Overlay -->
     <div class="tab-warning-overlay" id="tabWarning">
+
         <div class="tab-warning-content">
-            <div class="tab-warning-icon">⚠️</div>
-            <h2>Session Paused</h2>
-            <p>You switched tabs. Timer has been paused.</p>
-            <p class="tab-warning-sub">Return to this tab to resume your focus session.</p>
+
+            <div class="tab-warning-icon">
+                ⚠️
+            </div>
+
+            <h2>
+                Focus Broken
+            </h2>
+
+            <p>
+                You switched tabs or windows.
+            </p>
+
+            <p class="tab-warning-sub">
+                Return to your focus session before continuing.
+            </p>
+
+            <button class="focus-return-btn" onclick="returnToFocus()">
+
+                Return To Focus
+
+            </button>
+
         </div>
+
     </div>
 
     <!-- Header -->
@@ -61,8 +86,8 @@
             <div class="timer-container">
                 <div class="timer-ring">
                     <svg class="timer-svg" viewBox="0 0 120 120">
-                        <circle class="timer-track" cx="60" cy="60" r="54"/>
-                        <circle class="timer-progress" id="timerProgress" cx="60" cy="60" r="54"/>
+                        <circle class="timer-track" cx="60" cy="60" r="54" />
+                        <circle class="timer-progress" id="timerProgress" cx="60" cy="60" r="54" />
                     </svg>
                     <div class="timer-display">
                         <div class="timer-main" id="timerMain">60:00</div>
@@ -133,7 +158,7 @@
         // ===== SESSION SETUP =====
         const urlParams = new URLSearchParams(window.location.search);
         const roomCode = urlParams.get('room');
-        
+
         let configStr = sessionStorage.getItem('zenith_session_config');
         let config = {};
         if (configStr) {
@@ -162,7 +187,6 @@
         let totalSeconds = duration * 60;
         let remainingSeconds = totalSeconds;
         let isPaused = false;
-        let isTabHidden = false;
         let timerInterval;
         let elapsedMs = 0;
         let lastTick = Date.now();
@@ -171,17 +195,13 @@
         let videoStream = null;
         let isVideoOn = false;
 
-        // ===== SUPABASE CONFIG =====
-        // 1. Go to supabase.com → New Project
-        // 2. Project Settings → API
-        // 3. Copy "Project URL" and "anon public" key here
+        // ===== SUPABASE =====
         const SUPABASE_URL = 'https://ghmhqlfmxdxebcuqzior.supabase.co';
         const SUPABASE_ANON_KEY = 'sb_publishable_btGsxzju4OTmHRV--VhglQ_NTqEEgJh';
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        // WebRTC peers: { peerId: RTCPeerConnection }
+        // WebRTC peers
         let peers = {};
-        // Remote media: { peerId: HTMLVideoElement | MediaStream }
         let remoteVideos = {};
         let remoteStreams = {};
 
@@ -193,19 +213,29 @@
         let syncInterval = null;
 
         // ===== TAB VISIBILITY PAUSE =====
-        document.addEventListener('visibilitychange', function() {
+        const originalTitle = document.title || 'Zenith - Focus Room';
+        let focusLocked = false;
+
+        document.addEventListener('visibilitychange', function () {
             if (document.hidden) {
-                isTabHidden = true;
+                focusLocked = true;
+                document.title = '⚠ Return To Zenith';
                 if (!isPaused) pauseForTabSwitch();
                 document.getElementById('tabWarning').classList.add('active');
-            } else {
-                isTabHidden = false;
-                document.getElementById('tabWarning').classList.remove('active');
-                if (isPaused && !document.getElementById('pauseBtn').classList.contains('manual-pause')) {
-                    resumeFromTabSwitch();
-                }
+                document.body.style.overflow = 'hidden';
             }
         });
+
+        function returnToFocus() {
+            if (document.hidden) return;
+            focusLocked = false;
+            document.title = originalTitle;
+            document.getElementById('tabWarning').classList.remove('active');
+            document.body.style.overflow = '';
+            if (isPaused && !document.getElementById('pauseBtn').classList.contains('manual-pause')) {
+                resumeFromTabSwitch();
+            }
+        }
 
         function pauseForTabSwitch() {
             isPaused = true;
@@ -234,7 +264,7 @@
 
             // Add local stream tracks
             if (videoStream) {
-                videoStream.getTracks().forEach(function(track) {
+                videoStream.getTracks().forEach(function (track) {
                     pc.addTrack(track, videoStream);
                 });
             } else {
@@ -243,7 +273,7 @@
             }
 
             // Handle remote stream
-            pc.ontrack = function(event) {
+            pc.ontrack = function (event) {
                 const stream = event.streams[0];
                 if (!remoteVideos[peerId]) {
                     createRemoteVideo(peerId, stream);
@@ -253,7 +283,7 @@
             };
 
             // Handle ICE candidates
-            pc.onicecandidate = function(event) {
+            pc.onicecandidate = function (event) {
                 if (event.candidate) {
                     sendSignal({
                         type: 'ice-candidate',
@@ -264,7 +294,7 @@
                 }
             };
 
-            pc.onconnectionstatechange = function() {
+            pc.onconnectionstatechange = function () {
                 if (pc.connectionState === 'disconnected' || pc.connectionState === 'failed' || pc.connectionState === 'closed') {
                     removeRemoteVideo(peerId);
                     if (peers[peerId]) {
@@ -285,7 +315,7 @@
         function removeRemoteVideo(peerId) {
             const stream = remoteStreams[peerId];
             if (stream) {
-                stream.getTracks().forEach(function(t) { t.stop(); });
+                stream.getTracks().forEach(function (t) { t.stop(); });
             }
             delete remoteStreams[peerId];
             delete remoteVideos[peerId];
@@ -334,7 +364,7 @@
                 const offer = await pc.createOffer();
                 await pc.setLocalDescription(offer);
                 sendSignal({ type: 'offer', target: peerId, sender: myId, offer: offer });
-            } catch(err) {
+            } catch (err) {
                 console.warn('initiateConnection failed for', peerId, err);
                 delete peers[peerId];
             }
@@ -353,7 +383,7 @@
                 const answer = await pc.createAnswer();
                 await pc.setLocalDescription(answer);
                 sendSignal({ type: 'answer', target: peerId, sender: myId, answer: answer });
-            } catch(err) {
+            } catch (err) {
                 console.warn('handleOffer failed for', peerId, err);
             }
         }
@@ -380,7 +410,7 @@
                 const offer = await pc.createOffer();
                 await pc.setLocalDescription(offer);
                 sendSignal({ type: 'offer', target: peerId, sender: myId, offer: offer });
-            } catch(err) {
+            } catch (err) {
                 console.warn('renegotiatePeer failed for', peerId, err);
             }
         }
@@ -388,12 +418,12 @@
         function publishLocalStreamToPeers() {
             if (!videoStream) return;
 
-            Object.keys(peers).forEach(function(peerId) {
+            Object.keys(peers).forEach(function (peerId) {
                 const pc = peers[peerId];
                 let shouldRenegotiate = false;
 
-                videoStream.getTracks().forEach(function(track) {
-                    const existingSender = pc.getSenders().find(function(sender) {
+                videoStream.getTracks().forEach(function (track) {
+                    const existingSender = pc.getSenders().find(function (sender) {
                         return sender.track && sender.track.kind === track.kind;
                     });
 
@@ -416,8 +446,6 @@
             const btn = document.getElementById('videoToggle');
             const btnText = document.getElementById('videoToggleText');
 
-            if (isVideoOn && cameraRequired) return; // camera is mandatory — block turning off
-
             if (!isVideoOn) {
                 try {
                     const stream = await navigator.mediaDevices.getUserMedia({
@@ -432,7 +460,7 @@
                 }
             } else {
                 if (videoStream) {
-                    videoStream.getTracks().forEach(function(track) { track.stop(); });
+                    videoStream.getTracks().forEach(function (track) { track.stop(); });
                     videoStream = null;
                 }
                 btnText.textContent = 'Turn On Camera';
@@ -441,10 +469,10 @@
                 renderParticipants();
 
                 // Remove tracks from all peer connections
-                Object.keys(peers).forEach(function(peerId) {
+                Object.keys(peers).forEach(function (peerId) {
                     const pc = peers[peerId];
                     let shouldRenegotiate = false;
-                    pc.getSenders().forEach(function(sender) {
+                    pc.getSenders().forEach(function (sender) {
                         if (sender.track) {
                             pc.removeTrack(sender);
                             shouldRenegotiate = true;
@@ -458,9 +486,9 @@
         }
 
         // Stop video on page leave
-        window.addEventListener('beforeunload', function() {
+        window.addEventListener('beforeunload', function () {
             if (videoStream) {
-                videoStream.getTracks().forEach(function(track) { track.stop(); });
+                videoStream.getTracks().forEach(function (track) { track.stop(); });
             }
         });
 
@@ -480,13 +508,13 @@
                 });
 
                 supabaseChannel
-                    .on('broadcast', { event: 'signal' }, function({ payload }) {
+                    .on('broadcast', { event: 'signal' }, function ({ payload }) {
                         handleSignal(payload);
                     })
-                    .on('broadcast', { event: 'heartbeat' }, function({ payload }) {
+                    .on('broadcast', { event: 'heartbeat' }, function ({ payload }) {
                         handleSyncData(payload);
                     })
-                    .subscribe(function(status) {
+                    .subscribe(function (status) {
                         if (status === 'SUBSCRIBED') {
                             channelReady = true;
                             supabaseChannel.send({
@@ -499,7 +527,7 @@
                         }
                     });
 
-                syncInterval = setInterval(function() {
+                syncInterval = setInterval(function () {
                     if (supabaseChannel) {
                         supabaseChannel.send({
                             type: 'broadcast',
@@ -518,7 +546,7 @@
         function handleSyncData(data) {
             if (!data || data.id === myId) return;
 
-            const existing = participants.find(function(p) { return p.id === data.id; });
+            const existing = participants.find(function (p) { return p.id === data.id; });
             if (existing) {
                 existing.lastSeen = Date.now();
                 if (data.name && existing.name !== data.name) {
@@ -542,31 +570,16 @@
             }
         }
 
-        function loadParticipantsFromStorage() {
-            if (!roomCode) return;
-            try {
-                const roomState = JSON.parse(localStorage.getItem('zenith_room_state_' + roomCode) || '{}');
-                const now = Date.now();
-                Object.keys(roomState).forEach(function(id) {
-                    if (id === myId) return;
-                    const p = roomState[id];
-                    if (now - p.lastSeen < 10000) {
-                        handleSyncData({ id: id, name: p.name, type: 'join', timestamp: p.lastSeen });
-                    }
-                });
-            } catch(e) {}
-        }
-
         function cleanupOldParticipants() {
             const now = Date.now();
             const before = participants.length;
             const removed = [];
-            participants = participants.filter(function(p) {
+            participants = participants.filter(function (p) {
                 const keep = p.id === myId || (now - p.lastSeen < 8000);
                 if (!keep) removed.push(p.id);
                 return keep;
             });
-            removed.forEach(function(id) {
+            removed.forEach(function (id) {
                 if (peers[id]) {
                     peers[id].close();
                     delete peers[id];
@@ -584,7 +597,7 @@
             const maxSlots = 10;
             let html = '';
 
-            participants.forEach(function(p, i) {
+            participants.forEach(function (p, i) {
                 const hasVideo = p.id === myId ? isVideoOn : !!remoteStreams[p.id];
                 const cameraClass = hasVideo ? ' camera-on' : '';
                 const statusText = p.id === myId
@@ -593,26 +606,26 @@
                 html += '<div class="participant-card ' + p.status + cameraClass + '" id="participant-' + p.id + '" style="animation-delay: ' + (i * 0.08) + 's">' +
                     '<video class="partner-video" data-peer-id="' + p.id + '" autoplay ' + (p.id === myId ? 'muted ' : '') + 'playsinline></video>' +
                     '<div class="participant-avatar">' +
-                        '<span>' + p.avatar + '</span>' +
-                        '<div class="status-indicator ' + p.status + '"></div>' +
+                    '<span>' + p.avatar + '</span>' +
+                    '<div class="status-indicator ' + p.status + '"></div>' +
                     '</div>' +
                     '<div class="participant-video-shade"></div>' +
                     '<div class="participant-info">' +
-                        '<div class="participant-name">' + p.name + (p.id === myId ? ' (You)' : '') + '</div>' +
-                        '<div class="participant-status">' + statusText + '</div>' +
+                    '<div class="participant-name">' + p.name + (p.id === myId ? ' (You)' : '') + '</div>' +
+                    '<div class="participant-status">' + statusText + '</div>' +
                     '</div>' +
-                '</div>';
+                    '</div>';
             });
 
             const empty = maxSlots - participants.length;
             for (let i = 0; i < empty; i++) {
                 html += '<div class="participant-card waiting" style="animation-delay: ' + ((participants.length + i) * 0.08) + 's">' +
                     '<div class="participant-avatar" style="background:rgba(124,154,142,0.08); box-shadow:none;">' +
-                        '<span style="color:var(--text-muted); font-size:1.4rem;">+</span>' +
+                    '<span style="color:var(--text-muted); font-size:1.4rem;">+</span>' +
                     '</div>' +
                     '<div class="participant-name" style="color:var(--text-muted);">Waiting</div>' +
                     '<div class="participant-status" style="color:var(--text-light);">Available</div>' +
-                '</div>';
+                    '</div>';
             }
 
             grid.innerHTML = html;
@@ -627,7 +640,7 @@
                 selfVideo.style.display = 'block';
             }
 
-            Object.keys(remoteStreams).forEach(function(peerId) {
+            Object.keys(remoteStreams).forEach(function (peerId) {
                 const video = document.querySelector('.partner-video[data-peer-id="' + peerId + '"]');
                 if (video) {
                     video.srcObject = remoteStreams[peerId];
@@ -678,6 +691,7 @@
             if (remainingSeconds <= 0) {
                 clearInterval(timerInterval);
                 if (timerKey) localStorage.removeItem(timerKey);
+                localStorage.setItem('zenith_session_active', 'complete');
                 document.getElementById('timerMain').textContent = 'Done!';
                 document.getElementById('timerMain').style.fontSize = '1.6rem';
                 document.getElementById('sessionStatus').textContent = 'Session Complete';
@@ -692,6 +706,7 @@
             document.getElementById('pauseBtn').classList.toggle('paused', isPaused);
             document.getElementById('pauseBtn').classList.toggle('manual-pause', isPaused);
             document.getElementById('sessionStatus').textContent = isPaused ? 'Paused' : 'Session Active';
+            localStorage.setItem('zenith_session_active', isPaused ? 'paused' : 'active');
             lastTick = Date.now();
         }
 
@@ -722,10 +737,10 @@
             localStorage.setItem('zenith_user', JSON.stringify(user));
 
             let lb = JSON.parse(localStorage.getItem('zenith_leaderboard') || '[]');
-            const ex = lb.find(function(e) { return e.name === myName; });
+            const ex = lb.find(function (e) { return e.name === myName; });
             if (ex) { ex.xp = user.xp; ex.time = user.totalTime; }
             else lb.push({ name: myName, xp: user.xp, time: user.totalTime });
-            lb.sort(function(a, b) { return b.xp - a.xp; });
+            lb.sort(function (a, b) { return b.xp - a.xp; });
             localStorage.setItem('zenith_leaderboard', JSON.stringify(lb.slice(0, 20)));
         }
 
@@ -750,25 +765,26 @@
                 supabaseClient.removeChannel(supabaseChannel);
             }
             if (videoStream) {
-                videoStream.getTracks().forEach(function(track) { track.stop(); });
+                videoStream.getTracks().forEach(function (track) { track.stop(); });
             }
-            Object.keys(peers).forEach(function(peerId) {
+            Object.keys(peers).forEach(function (peerId) {
                 peers[peerId].close();
             });
             clearInterval(timerInterval);
             clearInterval(syncInterval);
             if (timerKey) localStorage.removeItem(timerKey);
+            localStorage.setItem('zenith_session_active', 'stopped');
             saveSessionStats();
             window.location.href = 'rooms.html';
         }
 
         function celebrateCompletion() {
-            document.querySelectorAll('.participant-card').forEach(function(card, i) {
-                setTimeout(function() { card.style.animation = 'celebrate 0.6s ease'; }, i * 100);
+            document.querySelectorAll('.participant-card').forEach(function (card, i) {
+                setTimeout(function () { card.style.animation = 'celebrate 0.6s ease'; }, i * 100);
             });
         }
 
-        document.getElementById('leaveModal').addEventListener('click', function(e) {
+        document.getElementById('leaveModal').addEventListener('click', function (e) {
             if (e.target === this) closeLeaveModal();
         });
 
@@ -800,7 +816,7 @@
                 remainingSeconds = Math.max(0, saved.remainingSeconds - awaySeconds);
                 elapsedMs = saved.elapsedMs + ageMs;
                 totalSeconds = saved.totalSeconds;
-            } catch(e) {}
+            } catch (e) { }
         }
 
         // ===== CAMERA SIGNAL =====
@@ -809,8 +825,8 @@
         function announceCamera() {
             if (!isVideoOn || !channelReady) return;
             sendSignal({ type: 'join', sender: myId, name: myName });
-            setTimeout(function() {
-                participants.forEach(function(p) {
+            setTimeout(function () {
+                participants.forEach(function (p) {
                     if (p.id !== myId && !peers[p.id] && myId > p.id) initiateConnection(p.id);
                 });
             }, 1500);
@@ -827,7 +843,7 @@
                 const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
                 applyStream(stream);
                 announceCamera();
-            } catch(err) {
+            } catch (err) {
                 // Customise denial message by room type
                 const roomLabel = sessionTypeText === 'Meditation' ? 'Meditation' : 'Study';
                 document.getElementById('camDeniedTitle').textContent = 'You\'re not fit for this ' + roomLabel + ' Room';
@@ -843,13 +859,9 @@
             isVideoOn = true;
 
             const btn = document.getElementById('videoToggle');
-            if (cameraRequired) {
-                // Camera is mandatory — hide the toggle so it can't be turned off
-                btn.style.display = 'none';
-            } else {
-                document.getElementById('videoToggleText').textContent = 'Turn Off Camera';
-                btn.classList.add('active');
-            }
+            document.getElementById('videoToggleText').textContent = 'Turn Off Camera';
+            btn.classList.add('active');
+
             publishLocalStreamToPeers();
             renderParticipants();
         }
@@ -862,10 +874,12 @@
         restoreTimerState();
         initRoom();
         initCamera();
+        localStorage.setItem('zenith_session_active', 'active');
         lastTick = Date.now();
         timerInterval = setInterval(updateTimer, 1000);
         setInterval(saveTimerState, 5000);
     </script>
 
 </body>
+
 </html>
