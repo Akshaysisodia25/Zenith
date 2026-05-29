@@ -1,0 +1,18 @@
+{
+  "manifest_version": 3,
+  "name": "Zenith Focus Enforcer",
+  "version": "1.0",
+  "description": "Ensures you stay focused in Zenith and blocks distracting tabs.",
+  "permissions": [
+    "tabs",
+    "storage",
+    "scripting"
+  ],
+  "host_permissions": [
+    "<all_urls>"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {}
+}
