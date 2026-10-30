@@ -9,10 +9,6 @@
   const content = document.createElement('div');
   content.className = 'zenith-focus-content';
 
-  const icon = document.createElement('div');
-  icon.className = 'zenith-focus-icon';
-  icon.textContent = '⚠️';
-
   const title = document.createElement('h2');
   title.textContent = 'Focus Broken';
 
@@ -29,7 +25,6 @@
     if (document.body) document.body.style.overflow = '';
   });
 
-  content.appendChild(icon);
   content.appendChild(title);
   content.appendChild(desc);
   content.appendChild(btn);

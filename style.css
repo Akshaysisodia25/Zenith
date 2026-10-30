@@ -265,15 +265,26 @@ a {
 
 .mobile-nav-toggle {
     display: none;
-    width: 38px;
+    min-width: 38px;
     height: 38px;
+    padding: 0 12px;
     align-items: center;
     justify-content: center;
     border: 1px solid var(--border);
     border-radius: var(--radius-sm);
     cursor: pointer;
-    font-size: 1.2rem;
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
     color: var(--text);
+    background: transparent;
+    transition: all var(--transition-fast);
+}
+
+.mobile-nav-toggle:hover {
+    background: var(--bg-alt);
+    border-color: var(--text);
 }
 
 /* ============================================================
@@ -1384,7 +1395,7 @@ a {
 
 .password-wrap input {
     width: 100%;
-    padding-right: 42px;
+    padding-right: 58px;
 }
 
 .password-eye-btn {
@@ -1392,7 +1403,18 @@ a {
     right: 12px;
     color: var(--text-muted);
     cursor: pointer;
-    font-size: 1rem;
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    background: transparent;
+    border: none;
+    padding: 2px 4px;
+    transition: color var(--transition-fast);
+}
+
+.password-eye-btn:hover {
+    color: var(--text);
 }
 
 /* ============================================================

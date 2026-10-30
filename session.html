@@ -15,8 +15,7 @@
     <!-- Camera Denied Overlay -->
     <div class="modal-overlay" id="camDeniedOverlay" style="display:none; z-index:9999;">
         <div class="modal" style="background:var(--bg-dark-surface); color:var(--text-light); border-color:var(--border-dark); text-align:center;">
-            <div style="font-size:2rem; margin-bottom:12px;">🚫</div>
-            <h2 id="camDeniedTitle" style="color:var(--text-light);">Camera Permission Required</h2>
+            <h2 id="camDeniedTitle" style="color:var(--text-light); margin-bottom:8px;">Camera Permission Required</h2>
             <p id="camDeniedMsg" style="color:var(--text-light-muted); margin-bottom:24px;">Focus Cam is required for this room to maintain shared accountability.</p>
             <div style="display:flex; gap:10px; justify-content:center;">
                 <button class="stage-btn" onclick="window.location.href='rooms.html'">← Choose Room</button>
@@ -28,8 +27,7 @@
     <!-- Tab Switch Warning Overlay (Anti-Distraction Shield) -->
     <div class="tab-warning-overlay" id="tabWarning">
         <div class="tab-warning-card">
-            <div style="font-size:2.2rem; margin-bottom:12px;">⚠️</div>
-            <h2>Focus Interrupted</h2>
+            <h2 style="margin-bottom:8px;">Focus Interrupted</h2>
             <p>You left the workspace tab. Session timer is paused to preserve accurate focus metrics.</p>
             <button class="primary-btn" onclick="returnToFocus()" style="background:var(--text-light); color:var(--bg-dark);">Return to Focus</button>
         </div>
@@ -49,7 +47,7 @@
             </span>
             <span id="roomCodeWrap" style="display:none;">
                 <button class="room-copy-btn" onclick="copyRoomCode()" title="Click to copy invite link">
-                    <span id="roomCodeDisplay">ROOM CODE</span> 📋
+                    <span id="roomCodeDisplay">ROOM CODE</span> (Copy)
                 </button>
             </span>
             <button class="stage-btn" id="videoToggle" onclick="toggleVideo()" style="padding:6px 14px; font-size:0.78rem;">
@@ -80,7 +78,7 @@
             <!-- Stage Timer Controls -->
             <div class="timer-stage-controls">
                 <button class="stage-btn primary" id="pauseBtn" onclick="togglePause()" style="min-width:110px;">
-                    <span id="pauseIcon">⏸</span> <span id="pauseText">Pause</span>
+                    <span id="pauseText">Pause</span>
                 </button>
                 <button class="stage-btn" onclick="addFiveMinutes()" title="Add 5 Minutes to session">
                     +5m
@@ -121,7 +119,6 @@
     <!-- Leave Session Confirmation Modal -->
     <div class="modal-overlay" id="leaveModal" onclick="closeLeaveModal()">
         <div class="modal" onclick="event.stopPropagation()" style="background:var(--bg-dark-surface); color:var(--text-light); border-color:var(--border-dark); max-width:400px; text-align:center;">
-            <div style="font-size:2rem; margin-bottom:12px;">🚪</div>
             <h2 style="color:var(--text-light); margin-bottom:8px;">Leave Focus Space?</h2>
             <p style="color:var(--text-light-muted); margin-bottom:24px;">Your progress, elapsed focus time, and earned XP will be safely stored.</p>
             <div style="display:flex; gap:10px;">
@@ -218,7 +215,7 @@
         document.addEventListener('visibilitychange', function () {
             if (document.hidden) {
                 focusLocked = true;
-                document.title = '⚠ Focus Paused — Return to Zenith';
+                document.title = 'Focus Paused — Return to Zenith';
                 if (!isPaused) pauseForTabSwitch();
                 document.getElementById('tabWarning').classList.add('active');
                 document.body.style.overflow = 'hidden';
@@ -239,7 +236,6 @@
         function pauseForTabSwitch() {
             isPaused = true;
             lastTick = Date.now();
-            document.getElementById('pauseIcon').textContent = '▶';
             document.getElementById('pauseText').textContent = 'Resume';
             document.getElementById('pauseBtn').classList.add('paused');
             document.getElementById('sessionStatus').textContent = 'Paused — Tab Interrupted';
@@ -248,7 +244,6 @@
         function resumeFromTabSwitch() {
             isPaused = false;
             lastTick = Date.now();
-            document.getElementById('pauseIcon').textContent = '⏸';
             document.getElementById('pauseText').textContent = 'Pause';
             document.getElementById('pauseBtn').classList.remove('paused');
             document.getElementById('sessionStatus').textContent = 'Session Active';
@@ -682,7 +677,6 @@
 
         function togglePause() {
             isPaused = !isPaused;
-            document.getElementById('pauseIcon').textContent = isPaused ? '▶' : '⏸';
             document.getElementById('pauseText').textContent = isPaused ? 'Resume' : 'Pause';
             document.getElementById('pauseBtn').classList.toggle('manual-pause', isPaused);
             document.getElementById('sessionStatus').textContent = isPaused ? 'Paused' : 'Session Active';

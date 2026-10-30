@@ -34,16 +34,14 @@
 
         <div class="nav-actions">
             <button class="exp-btn" onclick="openModal('expModal'); renderExp();" title="View Focus Stats">
-                <span>⚡</span>
                 <span>My Exp</span>
             </button>
             <button class="lb-nav-btn" onclick="openModal('leaderboardModal'); renderLeaderboard();" title="View Rankings">
-                <span>🏆</span>
                 <span>Leaderboard</span>
             </button>
             <a href="login.html" class="login-btn" id="authButton">Login</a>
             <button class="mobile-nav-toggle" id="mobileMenuBtn" aria-label="Open mobile navigation" onclick="toggleMobileMenu()">
-                <span>☰</span>
+                <span>Menu</span>
             </button>
         </div>
     </header>
@@ -64,7 +62,6 @@
             <!-- Search, Filter & Quick Actions Toolbar -->
             <div class="rooms-toolbar">
                 <div class="search-field-wrap">
-                    <span style="font-size:0.9rem; color:var(--text-muted);">🔍</span>
                     <input type="text" id="roomSearchInput" placeholder="Search by discipline or keyword..." oninput="filterRooms()">
                 </div>
 
@@ -81,7 +78,7 @@
 
                 <div style="display:flex; align-items:center; gap:10px;">
                     <button class="secondary-btn" onclick="openJoinModal()" style="padding:9px 16px; font-size:0.82rem;">
-                        <span>🔗 Join Code</span>
+                        <span>Join Code</span>
                     </button>
                     <button class="primary-btn" onclick="openCustomRoomModal()" style="padding:9px 18px; font-size:0.82rem;">
                         <span>+ Custom Room</span>

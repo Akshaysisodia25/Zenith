@@ -110,7 +110,7 @@ function togglePasswordVisibility(btn) {
     passwordInput.type = isPassword ? 'text' : 'password';
     if (btn) {
         btn.setAttribute('aria-label', isPassword ? 'Hide password' : 'Show password');
-        btn.textContent = isPassword ? '👁' : '🔒';
+        btn.textContent = isPassword ? 'Hide' : 'Show';
     }
 }
 
