@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zenith — Create Account</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+
+    <div class="auth-page-layout">
+        <!-- Editorial Side Panel (Architectural) -->
+        <aside class="auth-panel-editorial">
+            <div class="auth-brand">
+                <a href="index.html" style="color:var(--text-light); text-decoration:none;">ZENITH</a>
+            </div>
+
+            <div class="auth-editorial-content">
+                <div class="section-tag" style="color:var(--text-light-muted); margin-bottom:16px;">NEW MEMBERSHIP</div>
+                <h1>Start your<br>focus routine.</h1>
+                <p>Join thousands of dedicated individuals building unbroken daily study streaks in real-time rooms.</p>
+            </div>
+
+            <div style="font-family:var(--font-mono); font-size:0.75rem; color:var(--text-light-muted);">
+                © 2026 ZENITH ARCHITECTURE
+            </div>
+        </aside>
+
+        <!-- Form Side Panel -->
+        <main class="auth-panel-form">
+            <div style="margin-bottom:28px;">
+                <a href="index.html" style="font-size:0.84rem; font-weight:600; color:var(--text-secondary); display:inline-flex; align-items:center; gap:6px;">
+                    ← Back to Home
+                </a>
+            </div>
+
+            <h2 class="auth-form-title" id="authTitle">Create Account</h2>
+            <p class="auth-form-sub" id="authSubtitle">Set up your profile to track hours and join group spaces.</p>
+
+            <form onsubmit="handleLogin(event)">
+                <div class="input-block" id="authNameGroup">
+                    <label for="authFullName">Full Name</label>
+                    <input type="text" id="authFullName" placeholder="e.g. Alex Mercer" required autocomplete="name">
+                </div>
+
+                <div class="input-block">
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email" placeholder="you@university.edu" required autocomplete="email">
+                </div>
+
+                <div class="input-block">
+                    <label for="password">Create Password</label>
+                    <div class="password-wrap">
+                        <input type="password" id="password" placeholder="At least 6 characters" required autocomplete="new-password">
+                        <button type="button" class="password-eye-btn" onclick="togglePasswordVisibility(this)" aria-label="Toggle password visibility">👁</button>
+                    </div>
+                </div>
+
+                <p id="authMessage" class="auth-message" style="display:none;"></p>
+
+                <button type="submit" class="submit-btn" id="authSubmit" style="width:100%; margin-top:8px;">
+                    <span>Create Account</span>
+                    <span class="arrow-icon">→</span>
+                </button>
+
+                <div style="margin-top:24px; font-size:0.88rem; color:var(--text-secondary); text-align:center;">
+                    <span id="authSwitchText">Already have an account?</span>
+                    <a href="login.html" id="authSwitchLink" style="color:var(--text); font-weight:600; text-decoration:underline; margin-left:4px;">Sign in</a>
+                </div>
+            </form>
+        </main>
+    </div>
+
+    <script src="auth.js"></script>
+</body>
+</html>

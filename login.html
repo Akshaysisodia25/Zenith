@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zenith — Sign In</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+
+    <div class="auth-page-layout">
+        <!-- Editorial Side Panel (Architectural) -->
+        <aside class="auth-panel-editorial">
+            <div class="auth-brand">
+                <a href="index.html" style="color:var(--text-light); text-decoration:none;">ZENITH</a>
+            </div>
+
+            <div class="auth-editorial-content">
+                <div class="section-tag" style="color:var(--text-light-muted); margin-bottom:16px;">WORKSPACE ACCESS</div>
+                <h1>Find your focus.<br>Return to flow.</h1>
+                <p>Zenith connects focused students, researchers, and builders in structured accountability rooms.</p>
+            </div>
+
+            <div style="font-family:var(--font-mono); font-size:0.75rem; color:var(--text-light-muted);">
+                © 2026 ZENITH ARCHITECTURE
+            </div>
+        </aside>
+
+        <!-- Form Side Panel -->
+        <main class="auth-panel-form">
+            <div style="margin-bottom:28px;">
+                <a href="index.html" style="font-size:0.84rem; font-weight:600; color:var(--text-secondary); display:inline-flex; align-items:center; gap:6px;">
+                    ← Back to Home
+                </a>
+            </div>
+
+            <h2 class="auth-form-title" id="authTitle">Sign In</h2>
+            <p class="auth-form-sub" id="authSubtitle">Enter your credentials to access your rooms and saved stats.</p>
+
+            <form onsubmit="handleLogin(event)">
+                <div class="input-block">
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email" placeholder="you@university.edu" required autocomplete="email">
+                </div>
+
+                <div class="input-block">
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <label for="password">Password</label>
+                        <a href="#" onclick="handlePasswordReset(event)" style="font-size:0.75rem; color:var(--text-secondary); text-decoration:underline;">Forgot password?</a>
+                    </div>
+                    <div class="password-wrap">
+                        <input type="password" id="password" placeholder="••••••••" required autocomplete="current-password">
+                        <button type="button" class="password-eye-btn" onclick="togglePasswordVisibility(this)" aria-label="Toggle password visibility">👁</button>
+                    </div>
+                </div>
+
+                <p id="authMessage" class="auth-message" style="display:none;"></p>
+
+                <button type="submit" class="submit-btn" id="authSubmit" style="width:100%; margin-top:8px;">
+                    <span>Sign In</span>
+                    <span class="arrow-icon">→</span>
+                </button>
+
+                <div style="margin-top:24px; font-size:0.88rem; color:var(--text-secondary); text-align:center;">
+                    <span id="authSwitchText">Don't have an account yet?</span>
+                    <a href="signup.html" id="authSwitchLink" style="color:var(--text); font-weight:600; text-decoration:underline; margin-left:4px;">Create an account</a>
+                </div>
+            </form>
+        </main>
+    </div>
+
+    <script src="auth.js"></script>
+</body>
+</html>

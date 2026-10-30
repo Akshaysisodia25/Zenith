@@ -1,165 +1,143 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Zenith — Deep Focus Workspace</title>
+    <title>Zenith — Focus Workspace</title>
     <link rel="stylesheet" href="style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
-
-<body class="session-body">
-
-    <!-- Background Layer -->
-    <div class="session-bg"></div>
-    <div class="session-bg-overlay"></div>
+<body class="session-workspace-body">
 
     <!-- Camera Denied Overlay -->
-    <div class="cam-denied-overlay" id="camDeniedOverlay" style="display:none;">
-        <div class="cam-denied-icon">🚫</div>
-        <h2 id="camDeniedTitle">Camera Permission Needed</h2>
-        <p id="camDeniedMsg">Focus Cam is enabled for this workspace to maintain shared peer accountability.</p>
-        <div style="display: flex; gap: 12px; flex-wrap: wrap; justify-content: center;">
-            <button class="cam-denied-btn" onclick="window.location.href='rooms.html'">← Choose Different Room</button>
-            <button class="ghost-btn" onclick="continueWithoutCamera()" style="border-radius: var(--radius-pill);">Continue Audio-Only</button>
+    <div class="modal-overlay" id="camDeniedOverlay" style="display:none; z-index:9999;">
+        <div class="modal" style="background:var(--bg-dark-surface); color:var(--text-light); border-color:var(--border-dark); text-align:center;">
+            <div style="font-size:2rem; margin-bottom:12px;">🚫</div>
+            <h2 id="camDeniedTitle" style="color:var(--text-light);">Camera Permission Required</h2>
+            <p id="camDeniedMsg" style="color:var(--text-light-muted); margin-bottom:24px;">Focus Cam is required for this room to maintain shared accountability.</p>
+            <div style="display:flex; gap:10px; justify-content:center;">
+                <button class="stage-btn" onclick="window.location.href='rooms.html'">← Choose Room</button>
+                <button class="stage-btn primary" onclick="continueWithoutCamera()">Continue Audio-Only</button>
+            </div>
         </div>
     </div>
 
     <!-- Tab Switch Warning Overlay (Anti-Distraction Shield) -->
     <div class="tab-warning-overlay" id="tabWarning">
-        <div class="tab-warning-content">
-            <div class="tab-warning-icon">⚠️</div>
+        <div class="tab-warning-card">
+            <div style="font-size:2.2rem; margin-bottom:12px;">⚠️</div>
             <h2>Focus Interrupted</h2>
-            <p>You left the workspace window. Your session timer is currently paused to preserve accurate focus metrics.</p>
-            <button class="focus-return-btn" onclick="returnToFocus()">Return to Focus</button>
+            <p>You left the workspace tab. Session timer is paused to preserve accurate focus metrics.</p>
+            <button class="primary-btn" onclick="returnToFocus()" style="background:var(--text-light); color:var(--bg-dark);">Return to Focus</button>
         </div>
     </div>
 
-    <!-- Session Header / HUD -->
-    <header class="session-header">
-        <div class="session-info">
-            <div class="session-goal">
-                <span class="goal-label" id="sessionType">Study</span>
-                <span class="goal-text" id="sessionGoal">Deep Focus Study Session</span>
-            </div>
-            <div class="session-meta">
-                <span class="meta-item">
-                    <span class="meta-icon">👤</span>
-                    <span id="sessionName">You</span>
-                </span>
-                <span class="meta-item room-code-badge" id="roomCodeWrap" style="display:none;" onclick="copyRoomCode()" title="Click to copy invite link">
-                    <span class="meta-icon">🔗</span>
-                    <span id="roomCodeDisplay"></span>
-                    <span style="font-size:0.7rem; opacity:0.7;">(Copy)</span>
-                </span>
-            </div>
-            <div id="shareHint" style="display:none; font-size:0.75rem; color:var(--primary-light); opacity:0.85;">
-                Share this Room ID with peers to focus together in real time
-            </div>
+    <!-- Architectural HUD Header -->
+    <header class="session-hud-header">
+        <div class="session-hud-left">
+            <a href="rooms.html" class="session-hud-brand">ZENITH</a>
+            <span class="session-hud-badge" id="sessionType">STUDY</span>
+            <span style="font-size:0.95rem; font-weight:600; color:var(--text-light);" id="sessionGoal">Deep Focus Session</span>
         </div>
 
-        <!-- Ambient Audio & Fullscreen Utilities -->
-        <div style="display:flex; align-items:center; gap:12px;">
-            <button class="exp-btn" id="ambientSoundBtn" onclick="toggleAmbientSound()" title="Toggle calm background focus noise" style="padding:6px 12px;">
-                <span id="ambientSoundIcon">🎧</span>
-                <span id="ambientSoundText">Ambient Sound</span>
-            </button>
-            <button class="exp-btn" onclick="toggleFullScreen()" title="Toggle full screen" style="padding:6px 12px;">
-                <span>⛶</span>
-                <span>Zen Mode</span>
-            </button>
-        </div>
-
-        <!-- Center Dominant Timer Widget -->
-        <div class="session-timer-section">
-            <div class="timer-container">
-                <div class="timer-ring">
-                    <svg class="timer-svg" viewBox="0 0 120 120">
-                        <circle class="timer-track" cx="60" cy="60" r="54" />
-                        <circle class="timer-progress" id="timerProgress" cx="60" cy="60" r="54" />
-                    </svg>
-                    <div class="timer-display">
-                        <div class="timer-main" id="timerMain">60:00</div>
-                        <div class="timer-label">remaining</div>
-                    </div>
-                </div>
-            </div>
-            <div class="timer-controls">
-                <button class="timer-btn" id="pauseBtn" onclick="togglePause()" aria-label="Pause or resume timer" title="Pause / Resume">
-                    <span id="pauseIcon">⏸</span>
+        <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
+            <span style="font-size:0.8rem; color:var(--text-light-muted); font-family:var(--font-mono);">
+                PARTNER: <strong id="sessionName" style="color:var(--text-light);">You</strong>
+            </span>
+            <span id="roomCodeWrap" style="display:none;">
+                <button class="room-copy-btn" onclick="copyRoomCode()" title="Click to copy invite link">
+                    <span id="roomCodeDisplay">ROOM CODE</span> 📋
                 </button>
-                <button class="timer-btn" onclick="addFiveMinutes()" title="Add 5 Minutes" style="font-size:0.78rem; font-weight:700;">
-                    +5m
-                </button>
-            </div>
+            </span>
+            <button class="stage-btn" id="videoToggle" onclick="toggleVideo()" style="padding:6px 14px; font-size:0.78rem;">
+                <span id="videoToggleText">Turn On Camera</span>
+            </button>
+            <button class="stage-btn" onclick="leaveSession()" style="padding:6px 14px; font-size:0.78rem; border-color:rgba(220,38,38,0.4); color:#FCA5A5;">
+                Leave Space
+            </button>
         </div>
     </header>
 
-    <!-- Main Workspace Stage -->
-    <main class="session-main">
-        <div class="participants-section">
-            <div class="section-heading">
-                <div class="heading-left">
-                    <span class="heading-icon">👥</span>
-                    <span>Focus Partners</span>
-                    <span class="participant-count" id="participantCount">1/10</span>
+    <!-- Main Distraction-Free Workspace Stage -->
+    <main class="session-focus-stage">
+
+        <!-- Visually Dominant Editorial Timer Box -->
+        <section class="dominant-timer-box">
+            <div class="timer-circular-wrap">
+                <svg class="timer-svg-ring" viewBox="0 0 120 120">
+                    <circle class="timer-track-circle" cx="60" cy="60" r="54" />
+                    <circle class="timer-prog-circle" id="timerProgress" cx="60" cy="60" r="54" stroke-dasharray="339.292" stroke-dashoffset="0" />
+                </svg>
+                <div class="timer-center-info">
+                    <div class="timer-digits-display" id="timerMain">60:00</div>
+                    <div class="timer-label-sub">REMAINING</div>
                 </div>
-                <button class="video-toggle-btn" id="videoToggle" onclick="toggleVideo()">
-                    <span id="videoToggleText">Turn On Camera</span>
+            </div>
+
+            <!-- Stage Timer Controls -->
+            <div class="timer-stage-controls">
+                <button class="stage-btn primary" id="pauseBtn" onclick="togglePause()" style="min-width:110px;">
+                    <span id="pauseIcon">⏸</span> <span id="pauseText">Pause</span>
+                </button>
+                <button class="stage-btn" onclick="addFiveMinutes()" title="Add 5 Minutes to session">
+                    +5m
                 </button>
             </div>
+        </section>
 
-            <!-- Focus Partners Grid -->
-            <div class="participants-grid" id="participantsGrid"></div>
-        </div>
+        <!-- Focus Partners Grid (Up to 10 Slots) -->
+        <section class="session-participants-stage">
+            <div class="partners-heading-bar">
+                <div style="font-family:var(--font-mono); font-size:0.75rem; text-transform:uppercase; letter-spacing:0.1em; color:var(--text-light-muted);">
+                    FOCUS PARTNERS — <span id="participantCount" style="color:var(--text-light); font-weight:700;">1/10</span>
+                </div>
+                <div id="shareHint" style="display:none; font-size:0.75rem; color:var(--text-light-muted); font-family:var(--font-mono);">
+                    Share room code to invite study peers
+                </div>
+            </div>
 
-        <!-- Live Metrics Bar -->
-        <div class="stats-bar">
-            <div class="stat-item">
-                <span class="stat-dot" style="background: var(--primary); box-shadow: 0 0 10px var(--primary);"></span>
-                <span class="stat-text" id="sessionStatus">Session Active</span>
+            <div class="partners-grid-10" id="participantsGrid"></div>
+        </section>
+
+        <!-- Bottom Real-Time Metrics Strip -->
+        <footer class="session-metrics-footer">
+            <div style="display:flex; align-items:center; gap:8px;">
+                <span class="status-dot-green"></span>
+                <span id="sessionStatus">Session Active</span>
             </div>
-            <div class="stat-item">
-                <span class="stat-dot" style="background: var(--gold); box-shadow: 0 0 10px var(--gold);"></span>
-                <span class="stat-text" id="elapsedTime">Elapsed: 0:00</span>
+            <div>
+                <span id="elapsedTime">Elapsed: 0:00</span>
             </div>
-            <div class="stat-item">
-                <span class="stat-dot" style="background: var(--exp-green); box-shadow: 0 0 10px var(--exp-green);"></span>
-                <span class="stat-text" id="liveXP">+0 XP</span>
+            <div>
+                <span id="liveXP" style="color:var(--text-light); font-weight:700;">+0 XP</span>
             </div>
-        </div>
+        </footer>
+
     </main>
 
-    <!-- Leave Workspace Floating Button -->
-    <button class="leave-btn" onclick="leaveSession()">
-        <span class="leave-icon">🚪</span>
-        <span>Leave Session</span>
-    </button>
-
-    <!-- Leave Confirmation Modal -->
-    <div class="modal-overlay" id="leaveModal">
-        <div class="modal modal-small">
-            <div class="modal-header">
-                <div class="modal-icon">⚠️</div>
-                <h2>Leave Focus Space?</h2>
-                <p>Your session stats and XP will be preserved to your profile.</p>
-            </div>
-            <div class="leave-options">
-                <button class="submit-btn leave-confirm" onclick="confirmLeave()">Leave Room</button>
-                <button class="submit-btn" onclick="closeLeaveModal()">Stay Focused</button>
+    <!-- Leave Session Confirmation Modal -->
+    <div class="modal-overlay" id="leaveModal" onclick="closeLeaveModal()">
+        <div class="modal" onclick="event.stopPropagation()" style="background:var(--bg-dark-surface); color:var(--text-light); border-color:var(--border-dark); max-width:400px; text-align:center;">
+            <div style="font-size:2rem; margin-bottom:12px;">🚪</div>
+            <h2 style="color:var(--text-light); margin-bottom:8px;">Leave Focus Space?</h2>
+            <p style="color:var(--text-light-muted); margin-bottom:24px;">Your progress, elapsed focus time, and earned XP will be safely stored.</p>
+            <div style="display:flex; gap:10px;">
+                <button class="stage-btn" onclick="confirmLeave()" style="flex:1; border-color:var(--status-danger); color:var(--status-danger);">Leave Session</button>
+                <button class="stage-btn primary" onclick="closeLeaveModal()" style="flex:1;">Stay Focused</button>
             </div>
         </div>
     </div>
 
+    <!-- Toast Notification Container -->
+    <div id="zenithToastContainer" class="zenith-toast-container"></div>
+
     <!-- Scripts -->
-    <script src="canvas-particles.js"></script>
     <script src="auth.js"></script>
     <script>
-        // ===== SESSION SETUP =====
+        // ===== SESSION CONFIGURATION & URL PARAMS =====
         const urlParams = new URLSearchParams(window.location.search);
         const roomCode = urlParams.get('room');
 
@@ -168,7 +146,6 @@
         if (configStr) {
             config = JSON.parse(configStr);
         } else if (roomCode) {
-            // Joined via direct link without prior session setup
             window.location.href = 'rooms.html?join=' + roomCode;
         }
 
@@ -180,9 +157,9 @@
 
         document.getElementById('sessionName').textContent = myName;
         document.getElementById('sessionGoal').textContent = sessionGoalText;
-        document.getElementById('sessionType').textContent = sessionTypeText;
+        document.getElementById('sessionType').textContent = sessionTypeText.toUpperCase();
         if (roomCode) {
-            document.getElementById('roomCodeWrap').style.display = 'inline-flex';
+            document.getElementById('roomCodeWrap').style.display = 'inline-block';
             document.getElementById('roomCodeDisplay').textContent = roomCode;
             document.getElementById('shareHint').style.display = 'block';
         }
@@ -192,100 +169,16 @@
             const inviteUrl = window.location.origin + window.location.pathname.replace('session.html', 'rooms.html') + '?join=' + roomCode;
             if (navigator.clipboard && navigator.clipboard.writeText) {
                 navigator.clipboard.writeText(inviteUrl).then(() => {
-                    showToast('Room link copied to clipboard!', 'success');
+                    showToast('Room link copied to clipboard', 'success');
                 }).catch(() => {
-                    prompt('Copy this room invite link:', inviteUrl);
+                    prompt('Copy room invite link:', inviteUrl);
                 });
             } else {
-                prompt('Copy this room invite link:', inviteUrl);
+                prompt('Copy room invite link:', inviteUrl);
             }
         }
 
-        function toggleFullScreen() {
-            if (!document.fullscreenElement) {
-                document.documentElement.requestFullscreen().catch(() => {});
-            } else {
-                if (document.exitFullscreen) document.exitFullscreen();
-            }
-        }
-
-        // ===== AMBIENT SOUND GENERATOR (Web Audio API Brown/Pink Noise) =====
-        let audioCtx = null;
-        let noiseNode = null;
-        let gainNode = null;
-        let isAmbientOn = false;
-
-        function toggleAmbientSound() {
-            isAmbientOn = !isAmbientOn;
-            const btn = document.getElementById('ambientSoundBtn');
-            const icon = document.getElementById('ambientSoundIcon');
-            const text = document.getElementById('ambientSoundText');
-
-            if (isAmbientOn) {
-                startAmbientSound();
-                btn.style.borderColor = 'var(--primary)';
-                btn.style.color = 'var(--primary-light)';
-                text.textContent = 'Sound On';
-                showToast('Calm focus sound active', 'info');
-            } else {
-                stopAmbientSound();
-                btn.style.borderColor = '';
-                btn.style.color = '';
-                text.textContent = 'Ambient Sound';
-            }
-        }
-
-        function startAmbientSound() {
-            try {
-                if (!audioCtx) {
-                    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-                }
-                if (audioCtx.state === 'suspended') {
-                    audioCtx.resume();
-                }
-
-                // Generate gentle pink/brown noise for focus
-                const bufferSize = audioCtx.sampleRate * 2;
-                const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
-                const data = buffer.getChannelData(0);
-                let lastOut = 0.0;
-                for (let i = 0; i < bufferSize; i++) {
-                    const white = Math.random() * 2 - 1;
-                    data[i] = (lastOut + (0.02 * white)) / 1.02;
-                    lastOut = data[i];
-                    data[i] *= 3.5; // Soft volume
-                }
-
-                noiseNode = audioCtx.createBufferSource();
-                noiseNode.buffer = buffer;
-                noiseNode.loop = true;
-
-                // Low-pass filter for soft rain/stream texture
-                const filter = audioCtx.createBiquadFilter();
-                filter.type = 'lowpass';
-                filter.frequency.value = 650;
-
-                gainNode = audioCtx.createGain();
-                gainNode.gain.value = 0.12;
-
-                noiseNode.connect(filter);
-                filter.connect(gainNode);
-                gainNode.connect(audioCtx.destination);
-                noiseNode.start();
-            } catch (e) {
-                console.warn('Audio API unavailable:', e);
-            }
-        }
-
-        function stopAmbientSound() {
-            if (noiseNode) {
-                try { noiseNode.stop(); } catch (e) {}
-                noiseNode.disconnect();
-                noiseNode = null;
-            }
-        }
-
-        // ===== TIMER STATE =====
+        // ===== TIMER STATE & ENGINE =====
         let totalSeconds = duration * 60;
         let remainingSeconds = totalSeconds;
         let isPaused = false;
@@ -297,10 +190,9 @@
             remainingSeconds += 300;
             totalSeconds += 300;
             updateTimer();
-            showToast('+5 minutes added to session', 'info');
+            showToast('+5 minutes added', 'info');
         }
 
-        // Video state
         let videoStream = null;
         let isVideoOn = false;
 
@@ -309,26 +201,24 @@
         const SUPABASE_ANON_KEY = 'sb_publishable_btGsxzju4OTmHRV--VhglQ_NTqEEgJh';
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        // WebRTC peers
         let peers = {};
         let remoteVideos = {};
         let remoteStreams = {};
 
-        // Participants
         let participants = [];
         let myId = 'u_' + Date.now() + '_' + Math.random().toString(36).substr(2, 6);
         let supabaseChannel = null;
         let channelReady = false;
         let syncInterval = null;
 
-        // ===== TAB VISIBILITY PAUSE =====
-        const originalTitle = document.title || 'Zenith — Focus Room';
+        // Tab switch visibility detection
+        const originalTitle = document.title || 'Zenith — Focus Workspace';
         let focusLocked = false;
 
         document.addEventListener('visibilitychange', function () {
             if (document.hidden) {
                 focusLocked = true;
-                document.title = '⚠ Focus Interrupted — Return to Zenith';
+                document.title = '⚠ Focus Paused — Return to Zenith';
                 if (!isPaused) pauseForTabSwitch();
                 document.getElementById('tabWarning').classList.add('active');
                 document.body.style.overflow = 'hidden';
@@ -350,14 +240,16 @@
             isPaused = true;
             lastTick = Date.now();
             document.getElementById('pauseIcon').textContent = '▶';
+            document.getElementById('pauseText').textContent = 'Resume';
             document.getElementById('pauseBtn').classList.add('paused');
-            document.getElementById('sessionStatus').textContent = 'Paused — Tab Switched';
+            document.getElementById('sessionStatus').textContent = 'Paused — Tab Interrupted';
         }
 
         function resumeFromTabSwitch() {
             isPaused = false;
             lastTick = Date.now();
             document.getElementById('pauseIcon').textContent = '⏸';
+            document.getElementById('pauseText').textContent = 'Pause';
             document.getElementById('pauseBtn').classList.remove('paused');
             document.getElementById('sessionStatus').textContent = 'Session Active';
         }
@@ -427,7 +319,6 @@
             renderParticipants();
         }
 
-        // ===== SIGNALING =====
         function sendSignal(data) {
             data.room = roomCode;
             data.timestamp = Date.now();
@@ -469,7 +360,7 @@
                 await pc.setLocalDescription(offer);
                 sendSignal({ type: 'offer', target: peerId, sender: myId, offer: offer });
             } catch (err) {
-                console.warn('initiateConnection failed for', peerId, err);
+                console.warn('Connection failed for peer:', peerId, err);
                 delete peers[peerId];
             }
         }
@@ -508,7 +399,6 @@
         async function renegotiatePeer(peerId) {
             const pc = peers[peerId];
             if (!pc || pc.signalingState !== 'stable') return;
-
             try {
                 const offer = await pc.createOffer();
                 await pc.setLocalDescription(offer);
@@ -520,16 +410,13 @@
 
         function publishLocalStreamToPeers() {
             if (!videoStream) return;
-
             Object.keys(peers).forEach(function (peerId) {
                 const pc = peers[peerId];
                 let shouldRenegotiate = false;
-
                 videoStream.getTracks().forEach(function (track) {
                     const existingSender = pc.getSenders().find(function (sender) {
                         return sender.track && sender.track.kind === track.kind;
                     });
-
                     if (existingSender) {
                         existingSender.replaceTrack(track);
                     } else {
@@ -537,18 +424,15 @@
                         shouldRenegotiate = true;
                     }
                 });
-
                 if (shouldRenegotiate) {
                     renegotiatePeer(peerId);
                 }
             });
         }
 
-        // ===== VIDEO CAMERA TOGGLE =====
+        // ===== CAMERA TOGGLE =====
         async function toggleVideo() {
-            const btn = document.getElementById('videoToggle');
             const btnText = document.getElementById('videoToggleText');
-
             if (!isVideoOn) {
                 try {
                     const stream = await navigator.mediaDevices.getUserMedia({
@@ -557,18 +441,16 @@
                     });
                     applyStream(stream);
                     announceCamera();
-                    showToast('Focus Cam connected', 'success');
+                    showToast('Camera feed connected', 'success');
                 } catch (err) {
-                    showToast('Could not access camera. Check device permissions.', 'error');
-                    console.error('Camera error:', err);
+                    showToast('Could not access camera', 'error');
                 }
             } else {
                 if (videoStream) {
-                    videoStream.getTracks().forEach(function (track) { track.stop(); });
+                    videoStream.getTracks().forEach(t => t.stop());
                     videoStream = null;
                 }
                 btnText.textContent = 'Turn On Camera';
-                btn.classList.remove('active');
                 isVideoOn = false;
                 renderParticipants();
 
@@ -581,9 +463,7 @@
                             shouldRenegotiate = true;
                         }
                     });
-                    if (shouldRenegotiate) {
-                        renegotiatePeer(peerId);
-                    }
+                    if (shouldRenegotiate) renegotiatePeer(peerId);
                 });
                 showToast('Camera turned off', 'info');
             }
@@ -592,14 +472,13 @@
         function continueWithoutCamera() {
             document.getElementById('camDeniedOverlay').style.display = 'none';
             cameraRequired = false;
-            showToast('Joined in audio/presence mode', 'info');
+            showToast('Operating in presence mode', 'info');
         }
 
         window.addEventListener('beforeunload', function () {
             if (videoStream) {
-                videoStream.getTracks().forEach(function (track) { track.stop(); });
+                videoStream.getTracks().forEach(t => t.stop());
             }
-            stopAmbientSound();
         });
 
         // ===== REAL-TIME SYNC VIA SUPABASE =====
@@ -654,8 +533,7 @@
 
         function handleSyncData(data) {
             if (!data || data.id === myId) return;
-
-            const existing = participants.find(function (p) { return p.id === data.id; });
+            const existing = participants.find(p => p.id === data.id);
             if (existing) {
                 existing.lastSeen = Date.now();
                 if (data.name && existing.name !== data.name) {
@@ -671,7 +549,6 @@
                     lastSeen: Date.now()
                 });
                 renderParticipants();
-
                 if (!peers[data.id] && myId > data.id) {
                     initiateConnection(data.id);
                 }
@@ -682,61 +559,59 @@
             const now = Date.now();
             const before = participants.length;
             const removed = [];
-            participants = participants.filter(function (p) {
+            participants = participants.filter(p => {
                 const keep = p.id === myId || (now - p.lastSeen < 8000);
                 if (!keep) removed.push(p.id);
                 return keep;
             });
-            removed.forEach(function (id) {
+            removed.forEach(id => {
                 if (peers[id]) {
                     peers[id].close();
                     delete peers[id];
                 }
                 removeRemoteVideo(id);
             });
-            if (participants.length !== before) {
-                renderParticipants();
-            }
+            if (participants.length !== before) renderParticipants();
         }
 
-        // ===== PARTICIPANT RENDERING =====
+        // ===== PARTICIPANT GRID RENDERING (10 SLOTS) =====
         function renderParticipants() {
             const grid = document.getElementById('participantsGrid');
             const maxSlots = 10;
             let html = '';
 
-            participants.forEach(function (p, i) {
+            participants.forEach(p => {
                 const hasVideo = p.id === myId ? isVideoOn : !!remoteStreams[p.id];
                 const cameraClass = hasVideo ? ' camera-on' : '';
                 const statusText = p.id === myId
-                    ? (isVideoOn ? 'Live Video' : 'Presence Only')
-                    : (hasVideo ? 'Live Video' : 'Focused');
-                
-                html += '<div class="participant-card ' + p.status + cameraClass + '" id="participant-' + p.id + '">' +
-                    '<video class="partner-video" data-peer-id="' + p.id + '" autoplay ' + (p.id === myId ? 'muted ' : '') + 'playsinline></video>' +
-                    '<div class="participant-avatar">' +
-                    '<span>' + p.avatar + '</span>' +
-                    '<div class="status-indicator ' + p.status + '"></div>' +
-                    '</div>' +
-                    '<div class="participant-video-shade"></div>' +
-                    '<div class="participant-info">' +
-                    '<div class="participant-name">' + p.name + (p.id === myId ? ' (You)' : '') + '</div>' +
-                    '<div class="participant-status">' + statusText + '</div>' +
-                    '</div>' +
-                    '</div>';
+                    ? (isVideoOn ? 'Live' : 'Camera Off')
+                    : (hasVideo ? 'Live' : 'Focused');
+
+                html += `
+                    <div class="partner-card-slot ${cameraClass}" id="participant-${p.id}">
+                        <video class="partner-video-stream" data-peer-id="${p.id}" autoplay ${p.id === myId ? 'muted' : ''} playsinline></video>
+                        <div class="partner-avatar-pill">
+                            <span>${p.avatar}</span>
+                        </div>
+                        <div class="partner-info-strip">
+                            <span>${p.name}${p.id === myId ? ' (You)' : ''}</span>
+                            <span>${statusText}</span>
+                        </div>
+                    </div>
+                `;
             });
 
             const empty = maxSlots - participants.length;
             for (let i = 0; i < empty; i++) {
-                html += '<div class="participant-card waiting" onclick="copyRoomCode()" title="Click to copy invite code" style="cursor:pointer;">' +
-                    '<div class="participant-avatar" style="background:rgba(255,255,255,0.03); border-color:rgba(255,255,255,0.08); box-shadow:none;">' +
-                    '<span style="color:var(--text-muted); font-size:1.4rem;">+</span>' +
-                    '</div>' +
-                    '<div class="participant-info">' +
-                    '<div class="participant-name" style="color:var(--text-muted);">Available Seat</div>' +
-                    '<div class="participant-status" style="color:var(--primary-light);">+ Invite</div>' +
-                    '</div>' +
-                    '</div>';
+                html += `
+                    <div class="partner-card-slot waiting" onclick="copyRoomCode()" title="Click to copy invite code">
+                        <span style="font-size:1.5rem; color:var(--text-light-muted); opacity:0.5;">+</span>
+                        <div class="partner-info-strip">
+                            <span>Available Slot</span>
+                            <span>Invite</span>
+                        </div>
+                    </div>
+                `;
             }
 
             grid.innerHTML = html;
@@ -745,14 +620,14 @@
         }
 
         function attachParticipantVideos() {
-            const selfVideo = document.querySelector('.partner-video[data-peer-id="' + myId + '"]');
+            const selfVideo = document.querySelector('.partner-video-stream[data-peer-id="' + myId + '"]');
             if (selfVideo && videoStream) {
                 selfVideo.srcObject = videoStream;
                 selfVideo.style.display = 'block';
             }
 
-            Object.keys(remoteStreams).forEach(function (peerId) {
-                const video = document.querySelector('.partner-video[data-peer-id="' + peerId + '"]');
+            Object.keys(remoteStreams).forEach(peerId => {
+                const video = document.querySelector('.partner-video-stream[data-peer-id="' + peerId + '"]');
                 if (video) {
                     video.srcObject = remoteStreams[peerId];
                     video.style.display = 'block';
@@ -792,12 +667,7 @@
             const progress = totalSeconds > 0 ? (remainingSeconds / totalSeconds) : 0;
             const c = 2 * Math.PI * 54;
             const offset = c * (1 - progress);
-            const tp = document.getElementById('timerProgress');
-            tp.style.strokeDashoffset = offset;
-
-            if (progress < 0.15) tp.style.stroke = 'var(--danger)';
-            else if (progress < 0.4) tp.style.stroke = 'var(--gold)';
-            else tp.style.stroke = 'var(--primary)';
+            document.getElementById('timerProgress').style.strokeDashoffset = offset;
 
             if (remainingSeconds <= 0) {
                 clearInterval(timerInterval);
@@ -805,16 +675,15 @@
                 localStorage.setItem('zenith_session_active', 'complete');
                 document.getElementById('timerMain').textContent = 'Done!';
                 document.getElementById('sessionStatus').textContent = 'Session Complete';
-                celebrateCompletion();
                 saveSessionStats();
-                showToast('Congratulations! Deep focus block completed.', 'success');
+                showToast('Focus session complete. Well done.', 'success');
             }
         }
 
         function togglePause() {
             isPaused = !isPaused;
             document.getElementById('pauseIcon').textContent = isPaused ? '▶' : '⏸';
-            document.getElementById('pauseBtn').classList.toggle('paused', isPaused);
+            document.getElementById('pauseText').textContent = isPaused ? 'Resume' : 'Pause';
             document.getElementById('pauseBtn').classList.toggle('manual-pause', isPaused);
             document.getElementById('sessionStatus').textContent = isPaused ? 'Paused' : 'Session Active';
             localStorage.setItem('zenith_session_active', isPaused ? 'paused' : 'active');
@@ -848,14 +717,13 @@
             localStorage.setItem('zenith_user', JSON.stringify(user));
 
             let lb = JSON.parse(localStorage.getItem('zenith_leaderboard') || '[]');
-            const ex = lb.find(function (e) { return e.name === myName; });
+            const ex = lb.find(e => e.name === myName);
             if (ex) { ex.xp = user.xp; ex.time = user.totalTime; }
             else lb.push({ name: myName, xp: user.xp, time: user.totalTime });
-            lb.sort(function (a, b) { return b.xp - a.xp; });
+            lb.sort((a, b) => b.xp - a.xp);
             localStorage.setItem('zenith_leaderboard', JSON.stringify(lb.slice(0, 20)));
         }
 
-        // ===== LEAVE SESSION =====
         function leaveSession() {
             document.getElementById('leaveModal').classList.add('active');
             document.body.style.overflow = 'hidden';
@@ -876,12 +744,9 @@
                 supabaseClient.removeChannel(supabaseChannel);
             }
             if (videoStream) {
-                videoStream.getTracks().forEach(function (track) { track.stop(); });
+                videoStream.getTracks().forEach(t => t.stop());
             }
-            stopAmbientSound();
-            Object.keys(peers).forEach(function (peerId) {
-                peers[peerId].close();
-            });
+            Object.keys(peers).forEach(id => peers[id].close());
             clearInterval(timerInterval);
             clearInterval(syncInterval);
             if (timerKey) localStorage.removeItem(timerKey);
@@ -890,17 +755,6 @@
             window.location.href = 'rooms.html';
         }
 
-        function celebrateCompletion() {
-            document.querySelectorAll('.participant-card').forEach(function (card, i) {
-                setTimeout(function () { card.style.animation = 'celebrate 0.6s ease'; }, i * 100);
-            });
-        }
-
-        document.getElementById('leaveModal').addEventListener('click', function (e) {
-            if (e.target === this) closeLeaveModal();
-        });
-
-        // ===== TIMER PERSISTENCE =====
         const timerKey = roomCode ? 'zenith_timer_' + roomCode : null;
 
         function saveTimerState() {
@@ -927,18 +781,17 @@
                 remainingSeconds = Math.max(0, saved.remainingSeconds - awaySeconds);
                 elapsedMs = saved.elapsedMs + ageMs;
                 totalSeconds = saved.totalSeconds;
-            } catch (e) { }
+            } catch (e) {}
         }
 
-        // ===== CAMERA SIGNALS & INITIALIZATION =====
         function announceCamera() {
             if (!isVideoOn || !channelReady) return;
             sendSignal({ type: 'join', sender: myId, name: myName });
             setTimeout(function () {
-                participants.forEach(function (p) {
+                participants.forEach(p => {
                     if (p.id !== myId && !peers[p.id] && myId > p.id) initiateConnection(p.id);
                 });
-            }, 1500);
+            }, 1200);
         }
 
         async function initCamera() {
@@ -948,11 +801,6 @@
                 applyStream(stream);
                 announceCamera();
             } catch (err) {
-                const roomLabel = sessionTypeText === 'Meditation' ? 'Meditation' : 'Study';
-                document.getElementById('camDeniedTitle').textContent = 'Camera Permission Required';
-                document.getElementById('camDeniedMsg').textContent =
-                    'This ' + roomLabel + ' workspace requires Focus Cam to maintain shared accountability with your partners. '
-                    + 'Please grant camera access, or continue in presence/audio-only mode.';
                 document.getElementById('camDeniedOverlay').style.display = 'flex';
             }
         }
@@ -960,16 +808,12 @@
         function applyStream(stream) {
             videoStream = stream;
             isVideoOn = true;
-
-            const btn = document.getElementById('videoToggle');
             document.getElementById('videoToggleText').textContent = 'Turn Off Camera';
-            btn.classList.add('active');
-
             publishLocalStreamToPeers();
             renderParticipants();
         }
 
-        // ===== INITIALIZE WORKSPACE =====
+        // ===== INITIALIZATION =====
         const circumference = 2 * Math.PI * 54;
         document.getElementById('timerProgress').style.strokeDasharray = circumference;
         document.getElementById('timerProgress').style.strokeDashoffset = 0;
@@ -983,5 +827,4 @@
         setInterval(saveTimerState, 5000);
     </script>
 </body>
-
 </html>
