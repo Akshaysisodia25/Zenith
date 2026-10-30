@@ -3,80 +3,221 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Zenith</title>
+    <title>Zenith — Modern Focus & Digital Community Platform</title>
     <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
 
     <!-- Navbar -->
-    <nav class="navbar">
-        <div class="nav-brand">
-            <span class="brand-icon">◈</span>
-            <span class="brand-text">Zenith</span>
-        </div>
-        <ul class="nav-links">
+    <nav class="navbar" id="mainNavbar">
+        <a href="index.html" class="nav-brand" aria-label="Zenith Home">
+            <svg class="brand-logo-svg" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M14 2L25 8.5V19.5L14 26L3 19.5V8.5L14 2Z" stroke="rgba(255,255,255,0.2)" stroke-width="1.2"/>
+                <path d="M14 6L21.5 10.5V17.5L14 22L6.5 17.5V10.5L14 6Z" stroke="url(#zenithGrad)" stroke-width="1.5"/>
+                <circle cx="14" cy="14" r="2.5" fill="#AA88FF"/>
+                <defs>
+                    <linearGradient id="zenithGrad" x1="6.5" y1="6" x2="21.5" y2="22" gradientUnits="userSpaceOnUse">
+                        <stop stop-color="#AA88FF"/>
+                        <stop offset="1" stop-color="#6E54D8"/>
+                    </linearGradient>
+                </defs>
+            </svg>
+            <span class="brand-name">Zenith</span>
+            <span class="brand-badge">2.0</span>
+        </a>
+
+        <ul class="nav-links" id="navLinks">
             <li><a href="index.html" class="active">Home</a></li>
             <li><a href="rooms.html">Rooms</a></li>
+            <li><a href="#features">Features</a></li>
+            <li><a href="#demo">Interactive Focus</a></li>
             <li><a href="#about">About</a></li>
             <li><a href="#contact">Contact</a></li>
         </ul>
-        <button class="login-btn" id="authButton" onclick="handleAuthButton()">Login</button>
+
+        <div class="nav-actions">
+            <a href="rooms.html" class="exp-btn" style="text-decoration:none;">
+                <span class="exp-icon">⚡</span>
+                <span>Rooms</span>
+            </a>
+            <button class="login-btn" id="authButton" onclick="handleAuthButton()">Login</button>
+            <button class="mobile-nav-toggle" id="mobileMenuBtn" aria-label="Toggle navigation" onclick="toggleMobileMenu()">
+                <span>☰</span>
+            </button>
+        </div>
     </nav>
 
     <!-- Hero Section -->
     <main class="hero" id="home">
-        <div class="hero-backdrop" aria-hidden="true"></div>
         <div class="hero-content">
-            <span class="hero-kicker">Focused rooms for serious work</span>
-            <h1 class="hero-title">Zenith</h1>
-            <p class="hero-subtitle">Build deeper focus with live accountability rooms, shared goals, and calm session tracking.</p>
-            <div class="hero-actions">
-                <a href="rooms.html" class="enter-btn">Start Focus</a>
-                <a href="#about" class="secondary-btn">Learn More</a>
+            <div class="hero-kicker">
+                LIVE FOCUS ENGINE • PEER ACCOUNTABILITY
             </div>
+            <h1 class="hero-title">
+                Find your focus.<br>
+                <span class="hero-title-highlight">Find your people.</span>
+            </h1>
+            <p class="hero-subtitle">
+                A calm, minimalist digital community platform for students, researchers, and creators. Real-time focus rooms, accountability partners, and distraction shields built for deep work.
+            </p>
+            <div class="hero-actions">
+                <a href="rooms.html" class="enter-btn">
+                    <span>Explore Focus Rooms</span>
+                    <span>→</span>
+                </a>
+                <a href="rooms.html?action=new" class="secondary-btn">
+                    <span>Start Instant Session</span>
+                </a>
+            </div>
+
+            <!-- Metrics Bar -->
             <div class="hero-metrics" aria-label="Zenith highlights">
                 <div>
                     <strong>10</strong>
-                    <span>partners per room</span>
+                    <span>Partners Per Room</span>
                 </div>
                 <div>
                     <strong>60m</strong>
-                    <span>deep work sessions</span>
+                    <span>Deep Work Cycles</span>
                 </div>
                 <div>
                     <strong>Live</strong>
-                    <span>focus cam support</span>
+                    <span>Focus Cam Support</span>
+                </div>
+            </div>
+
+            <!-- App Showcase Preview Frame -->
+            <div class="hero-showcase">
+                <div class="hero-mockup-inner">
+                    <div class="mockup-header-bar">
+                        <div class="mockup-dots">
+                            <span class="mockup-dot"></span>
+                            <span class="mockup-dot"></span>
+                            <span class="mockup-dot"></span>
+                        </div>
+                        <div class="mockup-title">Zenith Workspace — Room #ZEN-F802</div>
+                        <div class="mockup-live-indicator">Live Session Active</div>
+                    </div>
+                    <img src="assets/zenith-hero-focus-room.png" alt="Zenith Focus Room Workspace Interface" loading="lazy">
                 </div>
             </div>
         </div>
     </main>
+
+    <!-- Feature Highlights Section -->
+    <section class="about-section" id="features">
+        <div class="section-container">
+            <div class="section-intro">
+                <span class="section-kicker">Core System Architecture</span>
+                <h2>Engineered for flow state, not superficial gamification.</h2>
+                <p>Zenith combines minimal aesthetics with proven behavioral psychology. Everything in the interface is designed to reduce cognitive friction and keep you locked into deep concentration.</p>
+            </div>
+
+            <div class="about-grid">
+                <article class="about-panel">
+                    <div class="panel-icon-wrap">◈</div>
+                    <h3>Purposeful Spaces</h3>
+                    <p>Select tailored focus environments for study, meditation, coding, and writing with custom durations, clear intentions, and instant shareable room links.</p>
+                </article>
+
+                <article class="about-panel">
+                    <div class="panel-icon-wrap">📹</div>
+                    <h3>Focus Cam Accountability</h3>
+                    <p>Peer presence without the distraction of chaotic chat. See your partners working silently alongside you via high-performance peer-to-peer WebRTC video.</p>
+                </article>
+
+                <article class="about-panel">
+                    <div class="panel-icon-wrap">🛡️</div>
+                    <h3>Tab-Switch Distraction Shield</h3>
+                    <p>If you leave the tab to browse social media or check notifications, Zenith pauses your session timer and displays a calm HUD warning until you return.</p>
+                </article>
+
+                <article class="about-panel">
+                    <div class="panel-icon-wrap">⚡</div>
+                    <h3>Realtime Flow XP & Streaks</h3>
+                    <p>Accumulate verifiable focus hours. Earn XP for every 30 seconds of unbroken deep work and track your consecutive daily study streaks.</p>
+                </article>
+
+                <article class="about-panel">
+                    <div class="panel-icon-wrap">🏆</div>
+                    <h3>Focus Leaderboard</h3>
+                    <p>Compare real time spent with dedicated peers globally. Climb the ranks from Beginner to Flow Master and Zenith Warrior without fake clicker metrics.</p>
+                </article>
+
+                <article class="about-panel">
+                    <div class="panel-icon-wrap">🔒</div>
+                    <h3>Zero Friction & Secure Auth</h3>
+                    <p>Instant guest participation with custom names, backed by secure Supabase authentication to permanently persist your stats and achievements across devices.</p>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    <!-- Interactive Focus Demo / Simulation Section -->
+    <section class="focus-simulation-section" id="demo">
+        <div class="section-container">
+            <div class="simulation-card">
+                <div class="sim-copy">
+                    <span class="section-kicker">Live Interactive Experience</span>
+                    <h2>Experience the calm right now.</h2>
+                    <p>Try our minimal focus timer below. Watch the smooth circular cadence, observe how clean the interface feels, and feel the clarity of a distraction-free screen.</p>
+                    <div style="display: flex; gap: 12px; margin-top: 24px; flex-wrap: wrap;">
+                        <button class="enter-btn" id="simToggleBtn" onclick="toggleSimTimer()">
+                            <span id="simBtnIcon">▶</span>
+                            <span id="simBtnText">Start 1-Min Sprint</span>
+                        </button>
+                        <button class="secondary-btn" onclick="resetSimTimer()">Reset</button>
+                    </div>
+                </div>
+
+                <div class="sim-preview-display">
+                    <div class="sim-timer-circle">
+                        <svg class="sim-timer-svg" viewBox="0 0 120 120">
+                            <circle class="sim-timer-track" cx="60" cy="60" r="54" />
+                            <circle class="sim-timer-prog" id="simProgress" cx="60" cy="60" r="54" stroke-dasharray="339.292" stroke-dashoffset="0" />
+                        </svg>
+                        <div class="sim-timer-text">
+                            <span class="sim-timer-digits" id="simTimeDisplay">01:00</span>
+                            <span class="sim-timer-label">Sprint Time</span>
+                        </div>
+                    </div>
+                    <div style="font-size: 0.82rem; color: var(--text-secondary); display: flex; align-items: center; gap: 8px;">
+                        <span style="display:inline-block; width:8px; height:8px; border-radius:50%; background:var(--primary); box-shadow:0 0 8px var(--primary);"></span>
+                        <span id="simStatus">Sprint Ready</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
     <!-- About Section -->
     <section class="about-section" id="about">
         <div class="section-container">
             <div class="section-intro">
                 <span class="section-kicker">About Zenith</span>
-                <h2>Designed for people who want focus to feel structured, social, and calm.</h2>
-                <p>Zenith turns solo study sessions into accountable focus rooms. Choose a room, set a goal, invite friends, and keep the session visible without cluttering the work.</p>
+                <h2>Built for individuals who take their craft seriously.</h2>
+                <p>Solo studying can lead to procrastination and isolation. Zenith turns solitude into shared, quiet momentum. Choose a space, declare your goal, invite your study group, and enter deep flow together.</p>
             </div>
 
             <div class="about-grid">
                 <article class="about-panel">
                     <span class="panel-icon">◈</span>
-                    <h3>Purposeful Rooms</h3>
-                    <p>Create study or meditation spaces with a clear duration, goal, and room ID for friends.</p>
+                    <h3>Minimalist Philosophy</h3>
+                    <p>No noisy chat feeds, distracting stickers, or cluttered toolbars. Just your partners, your timer, and your goal.</p>
                 </article>
                 <article class="about-panel">
                     <span class="panel-icon">▣</span>
-                    <h3>Focus Partners</h3>
-                    <p>See who is in the session, who is live, and which seats are open for the next teammate.</p>
+                    <h3>Verifiable Focus</h3>
+                    <p>Your camera proves you are showing up at your desk, creating the psychological accountability that makes libraries effective.</p>
                 </article>
                 <article class="about-panel">
                     <span class="panel-icon">◇</span>
-                    <h3>Progress Signals</h3>
-                    <p>Track elapsed time, XP, streaks, and leaderboard progress without breaking your flow.</p>
+                    <h3>Always Accessible</h3>
+                    <p>Runs natively in modern browsers with zero downloads or plugins required. Share a 6-character room code to start immediately.</p>
                 </article>
             </div>
         </div>
@@ -86,26 +227,32 @@
     <section class="contact-section" id="contact">
         <div class="section-container contact-layout">
             <div class="contact-copy">
-                <span class="section-kicker">Contact</span>
-                <h2>Bring focused collaboration to your study group.</h2>
-                <p>Questions, feedback, or ideas for your next study workflow? Send a note and the Zenith team will get back to you.</p>
+                <span class="section-kicker">Connect With Us</span>
+                <h2>Bring focused collaboration to your study group or team.</h2>
+                <p>Have questions, ideas for customized team spaces, or feedback on our focus tools? Send a direct note and our product team will respond promptly.</p>
                 <div class="contact-methods">
-                    <a href="mailto:hello@zenithfocus.app">hello@zenithfocus.app</a>
-                    <a href="rooms.html">Open a focus room</a>
+                    <a href="mailto:hello@zenithfocus.app">
+                        <span>✉</span>
+                        <span>hello@zenithfocus.app</span>
+                    </a>
+                    <a href="rooms.html">
+                        <span>→</span>
+                        <span>Open a live focus room now</span>
+                    </a>
                 </div>
             </div>
             <form class="contact-form" onsubmit="handleContact(event)">
                 <div class="input-group">
                     <label for="contactName">Name</label>
-                    <input type="text" id="contactName" placeholder="Your name" required>
+                    <input type="text" id="contactName" placeholder="Your name" required autocomplete="name">
                 </div>
                 <div class="input-group">
                     <label for="contactEmail">Email</label>
-                    <input type="email" id="contactEmail" placeholder="you@example.com" required>
+                    <input type="email" id="contactEmail" placeholder="you@domain.com" required autocomplete="email">
                 </div>
                 <div class="input-group">
                     <label for="contactMessage">Message</label>
-                    <textarea id="contactMessage" rows="5" placeholder="Tell us what you need" required></textarea>
+                    <textarea id="contactMessage" rows="4" placeholder="Tell us about your study group or questions..." required></textarea>
                 </div>
                 <button type="submit" class="submit-btn">Send Message</button>
             </form>
@@ -116,39 +263,54 @@
     <footer class="footer">
         <div class="footer-content">
             <div class="footer-brand">
-                <span class="brand-icon">◈</span>
+                <svg class="brand-logo-svg" viewBox="0 0 28 28" fill="none" style="width:20px; height:20px;">
+                    <path d="M14 2L25 8.5V19.5L14 26L3 19.5V8.5L14 2Z" stroke="rgba(255,255,255,0.3)" stroke-width="1.2"/>
+                    <circle cx="14" cy="14" r="2.5" fill="#AA88FF"/>
+                </svg>
                 <span>Zenith</span>
             </div>
             <div class="footer-links">
+                <a href="#features">Features</a>
+                <a href="rooms.html">Rooms</a>
+                <a href="#about">About</a>
+                <a href="#contact">Contact</a>
                 <a href="#">Privacy</a>
                 <a href="#">Terms</a>
-                <a href="#">Support</a>
             </div>
-            <p class="footer-copy">©️ 2026 Zenith. All rights reserved.</p>
+            <p class="footer-copy">© 2026 Zenith. All rights reserved.</p>
         </div>
     </footer>
 
-    <!-- Login Modal -->
+    <!-- Login / Auth Modal -->
     <div class="modal-overlay" id="loginModal" onclick="closeModal(event, 'loginModal')">
         <div class="modal" onclick="event.stopPropagation()">
-            <button class="modal-close" onclick="closeModal(null, 'loginModal')">×</button>
+            <button class="modal-close" onclick="closeModal(null, 'loginModal')" aria-label="Close modal">×</button>
             <div class="modal-header">
-                <span class="modal-icon">◈</span>
+                <div style="display:flex; justify-content:center; margin-bottom:12px;">
+                    <svg class="brand-logo-svg" viewBox="0 0 28 28" fill="none" style="width:36px; height:36px;">
+                        <path d="M14 2L25 8.5V19.5L14 26L3 19.5V8.5L14 2Z" stroke="rgba(255,255,255,0.2)" stroke-width="1.2"/>
+                        <path d="M14 6L21.5 10.5V17.5L14 22L6.5 17.5V10.5L14 6Z" stroke="#AA88FF" stroke-width="1.5"/>
+                        <circle cx="14" cy="14" r="2.5" fill="#AA88FF"/>
+                    </svg>
+                </div>
                 <h2 id="authTitle">Welcome Back</h2>
-                <p id="authSubtitle">Sign in to your Zenith account</p>
+                <p id="authSubtitle">Sign in to your Zenith workspace</p>
             </div>
-            <form class="login-form" onsubmit="handleLogin(event)">
+            <form class="login-form" onsubmit="handleLogin(event)" style="background:transparent; border:none; padding:0;">
                 <div class="input-group" id="authNameGroup" style="display:none;">
-                    <label for="authFullName">Name</label>
-                    <input type="text" id="authFullName" placeholder="Your name">
+                    <label for="authFullName">Full Name</label>
+                    <input type="text" id="authFullName" placeholder="Your name" autocomplete="name">
                 </div>
                 <div class="input-group">
                     <label for="email">Email</label>
-                    <input type="email" id="email" placeholder="you@example.com" required>
+                    <input type="email" id="email" placeholder="you@example.com" required autocomplete="email">
                 </div>
                 <div class="input-group">
                     <label for="password">Password</label>
-                    <input type="password" id="password" placeholder="••••••••" required>
+                    <div class="password-input-wrap">
+                        <input type="password" id="password" placeholder="••••••••" required autocomplete="current-password">
+                        <button type="button" class="password-toggle-btn" onclick="togglePasswordVisibility(this)" aria-label="Toggle password visibility">👁</button>
+                    </div>
                 </div>
                 <div class="form-options">
                     <label class="remember">
@@ -166,27 +328,51 @@
         </div>
     </div>
 
+    <!-- Scripts -->
+    <script src="canvas-particles.js"></script>
     <script src="auth.js"></script>
     <script>
         function openModal(id) {
-            document.getElementById(id).classList.add('active');
-            document.body.style.overflow = 'hidden';
+            const el = document.getElementById(id);
+            if (el) {
+                el.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            }
         }
 
         function closeModal(event, id) {
-            if (!event || event.target === document.getElementById(id) || event.target.classList.contains('modal-close')) {
-                document.getElementById(id).classList.remove('active');
-                document.body.style.overflow = '';
+            if (!event || event.target === document.getElementById(id) || (event.target && event.target.classList && event.target.classList.contains('modal-close'))) {
+                const el = document.getElementById(id);
+                if (el) {
+                    el.classList.remove('active');
+                    document.body.style.overflow = '';
+                }
             }
         }
 
         function handleContact(event) {
             event.preventDefault();
             const name = document.getElementById('contactName').value;
-            alert('Thanks, ' + name + '. Your message has been received.');
+            showToast('Thank you, ' + name + '. Your message has been received.', 'success');
             event.target.reset();
         }
 
+        function toggleMobileMenu() {
+            const navLinks = document.getElementById('navLinks');
+            if (navLinks) {
+                navLinks.classList.toggle('mobile-open');
+            }
+        }
+
+        // Close mobile menu on link click
+        document.querySelectorAll('.nav-links a').forEach(link => {
+            link.addEventListener('click', () => {
+                const navLinks = document.getElementById('navLinks');
+                if (navLinks) navLinks.classList.remove('mobile-open');
+            });
+        });
+
+        // Close modal on Escape key
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape') {
                 document.querySelectorAll('.modal-overlay.active').forEach(m => {
@@ -195,7 +381,72 @@
                 document.body.style.overflow = '';
             }
         });
-    </script>
 
+        // Interactive Mini Demo Timer Logic
+        let simSeconds = 60;
+        let simTotal = 60;
+        let simRunning = false;
+        let simInterval = null;
+        const simCirc = 2 * Math.PI * 54;
+
+        function updateSimDisplay() {
+            const m = Math.floor(simSeconds / 60);
+            const s = simSeconds % 60;
+            document.getElementById('simTimeDisplay').textContent = 
+                (m < 10 ? '0' : '') + m + ':' + (s < 10 ? '0' : '') + s;
+            
+            const progress = simSeconds / simTotal;
+            const offset = simCirc * (1 - progress);
+            document.getElementById('simProgress').style.strokeDashoffset = offset;
+        }
+
+        function toggleSimTimer() {
+            simRunning = !simRunning;
+            const btnIcon = document.getElementById('simBtnIcon');
+            const btnText = document.getElementById('simBtnText');
+            const status = document.getElementById('simStatus');
+
+            if (simRunning) {
+                btnIcon.textContent = '⏸';
+                btnText.textContent = 'Pause Sprint';
+                status.textContent = 'Sprint in Progress';
+                status.style.color = 'var(--primary-light)';
+                simInterval = setInterval(() => {
+                    if (simSeconds > 0) {
+                        simSeconds--;
+                        updateSimDisplay();
+                    } else {
+                        clearInterval(simInterval);
+                        simRunning = false;
+                        btnIcon.textContent = '▶';
+                        btnText.textContent = 'Start 1-Min Sprint';
+                        status.textContent = 'Sprint Complete! +10 XP';
+                        status.style.color = 'var(--exp-green)';
+                        showToast('1-minute focus sprint completed! Great job.', 'success');
+                    }
+                }, 1000);
+            } else {
+                clearInterval(simInterval);
+                btnIcon.textContent = '▶';
+                btnText.textContent = 'Resume Sprint';
+                status.textContent = 'Sprint Paused';
+                status.style.color = 'var(--gold)';
+            }
+        }
+
+        function resetSimTimer() {
+            clearInterval(simInterval);
+            simRunning = false;
+            simSeconds = 60;
+            updateSimDisplay();
+            document.getElementById('simBtnIcon').textContent = '▶';
+            document.getElementById('simBtnText').textContent = 'Start 1-Min Sprint';
+            const status = document.getElementById('simStatus');
+            status.textContent = 'Sprint Ready';
+            status.style.color = 'var(--text-secondary)';
+        }
+
+        updateSimDisplay();
+    </script>
 </body>
 </html>

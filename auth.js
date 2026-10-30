@@ -1,3 +1,8 @@
+/**
+ * Zenith Authentication & Toast System
+ * Integrated with Supabase Auth
+ */
+
 const ZENITH_SUPABASE_URL = 'https://ghmhqlfmxdxebcuqzior.supabase.co';
 const ZENITH_SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_btGsxzju4OTmHRV--VhglQ_NTqEEgJh';
 
@@ -5,6 +10,44 @@ const zenithSupabase = supabase.createClient(ZENITH_SUPABASE_URL, ZENITH_SUPABAS
 
 let authMode = 'signin';
 let currentSession = null;
+
+// Global Toast System
+function showToast(message, type = 'info', duration = 3500) {
+    let container = document.getElementById('zenithToastContainer');
+    if (!container) {
+        container = document.createElement('div');
+        container.id = 'zenithToastContainer';
+        container.className = 'zenith-toast-container';
+        document.body.appendChild(container);
+    }
+
+    const toast = document.createElement('div');
+    toast.className = `zenith-toast toast-${type}`;
+    
+    const iconMap = {
+        success: '✓',
+        error: '✕',
+        info: '◈',
+        warning: '⚠'
+    };
+    
+    toast.innerHTML = `
+        <span class="toast-icon">${iconMap[type] || '◈'}</span>
+        <span class="toast-text">${message}</span>
+    `;
+
+    container.appendChild(toast);
+
+    // Trigger animation
+    requestAnimationFrame(() => {
+        toast.classList.add('show');
+    });
+
+    setTimeout(() => {
+        toast.classList.remove('show');
+        setTimeout(() => toast.remove(), 300);
+    }, duration);
+}
 
 function getAuthDisplayName(user) {
     if (!user) return '';
@@ -24,8 +67,8 @@ function setAuthLoading(isLoading) {
     const submit = document.getElementById('authSubmit');
     if (!submit) return;
     submit.disabled = isLoading;
-    submit.textContent = isLoading
-        ? 'Please wait...'
+    submit.innerHTML = isLoading
+        ? '<span class="btn-spinner"></span> <span>Please wait...</span>'
         : (authMode === 'signup' ? 'Create Account' : 'Sign In');
 }
 
@@ -40,7 +83,7 @@ function setAuthMode(mode) {
     const switchLink = document.getElementById('authSwitchLink');
 
     if (title) title.textContent = isSignup ? 'Create Account' : 'Welcome Back';
-    if (subtitle) subtitle.textContent = isSignup ? 'Join Zenith and save your focus progress' : 'Sign in to your Zenith account';
+    if (subtitle) subtitle.textContent = isSignup ? 'Join Zenith and save your focus progress' : 'Sign in to your Zenith workspace';
     if (nameGroup) nameGroup.style.display = isSignup ? 'flex' : 'none';
     if (submit) submit.textContent = isSignup ? 'Create Account' : 'Sign In';
     if (switchText) switchText.textContent = isSignup ? 'Already have an account?' : "Don't have an account?";
@@ -51,6 +94,17 @@ function setAuthMode(mode) {
 function toggleAuthMode(event) {
     if (event) event.preventDefault();
     setAuthMode(authMode === 'signin' ? 'signup' : 'signin');
+}
+
+function togglePasswordVisibility(btn) {
+    const passwordInput = document.getElementById('password');
+    if (!passwordInput) return;
+    const isPassword = passwordInput.type === 'password';
+    passwordInput.type = isPassword ? 'text' : 'password';
+    if (btn) {
+        btn.setAttribute('aria-label', isPassword ? 'Hide password' : 'Show password');
+        btn.classList.toggle('active', isPassword);
+    }
 }
 
 function updateAuthUI(session) {
@@ -70,6 +124,7 @@ function updateAuthUI(session) {
         if (loginBtn) {
             loginBtn.textContent = 'Logout';
             loginBtn.classList.add('logged-in');
+            loginBtn.setAttribute('title', `Signed in as ${displayName}`);
         }
         if (roomName && !roomName.value) roomName.value = displayName;
         if (joinName && !joinName.value) joinName.value = displayName;
@@ -78,17 +133,25 @@ function updateAuthUI(session) {
         if (loginBtn) {
             loginBtn.textContent = 'Login';
             loginBtn.classList.remove('logged-in');
+            loginBtn.removeAttribute('title');
         }
     }
 }
 
 async function handleAuthButton() {
     if (currentSession && currentSession.user) {
-        await zenithSupabase.auth.signOut();
+        try {
+            await zenithSupabase.auth.signOut();
+            showToast('Signed out of Zenith', 'info');
+        } catch (err) {
+            console.error('Sign out error:', err);
+        }
         return;
     }
     setAuthMode('signin');
-    openModal('loginModal');
+    if (typeof openModal === 'function') {
+        openModal('loginModal');
+    }
 }
 
 async function handleLogin(event) {
@@ -118,48 +181,63 @@ async function handleLogin(event) {
         if (result.error) throw result.error;
 
         if (authMode === 'signup' && !result.data.session) {
-            setAuthMessage('Account created. Check your email to confirm your signup, then sign in.', 'success');
+            setAuthMessage('Account created. Check your email to confirm signup, then sign in.', 'success');
+            showToast('Account created! Please check your email.', 'success');
             setAuthMode('signin');
             return;
         }
 
         setAuthMessage('Signed in successfully.', 'success');
-        closeModal(null, 'loginModal');
+        showToast('Welcome back to Zenith', 'success');
+        if (typeof closeModal === 'function') {
+            closeModal(null, 'loginModal');
+        }
         if (event.target) event.target.reset();
     } catch (err) {
-        setAuthMessage(err.message || 'Authentication failed. Please try again.', 'error');
+        setAuthMessage(err.message || 'Authentication failed. Please check credentials.', 'error');
     } finally {
         setAuthLoading(false);
     }
 }
 
 async function handlePasswordReset(event) {
-    event.preventDefault();
-    const email = document.getElementById('email').value.trim();
+    if (event) event.preventDefault();
+    const emailEl = document.getElementById('email');
+    const email = emailEl ? emailEl.value.trim() : '';
     if (!email) {
-        setAuthMessage('Enter your email first, then click forgot password.', 'error');
+        setAuthMessage('Enter your email above first, then click forgot password.', 'error');
+        if (emailEl) emailEl.focus();
         return;
     }
 
-    const { error } = await zenithSupabase.auth.resetPasswordForEmail(email, {
-        redirectTo: window.location.href
-    });
+    try {
+        const { error } = await zenithSupabase.auth.resetPasswordForEmail(email, {
+            redirectTo: window.location.href
+        });
 
-    if (error) {
-        setAuthMessage(error.message, 'error');
-        return;
+        if (error) {
+            setAuthMessage(error.message, 'error');
+            return;
+        }
+
+        setAuthMessage('Password reset instructions sent to your email.', 'success');
+        showToast('Reset email sent', 'info');
+    } catch (err) {
+        setAuthMessage('Failed to send reset email.', 'error');
     }
-
-    setAuthMessage('Password reset email sent.', 'success');
 }
 
 async function initAuth() {
     setAuthMode('signin');
-    const { data } = await zenithSupabase.auth.getSession();
-    updateAuthUI(data.session);
-    zenithSupabase.auth.onAuthStateChange(function(_event, session) {
-        updateAuthUI(session);
-    });
+    try {
+        const { data } = await zenithSupabase.auth.getSession();
+        updateAuthUI(data.session);
+        zenithSupabase.auth.onAuthStateChange(function(_event, session) {
+            updateAuthUI(session);
+        });
+    } catch (e) {
+        console.warn('Auth init note:', e);
+    }
 }
 
 document.addEventListener('DOMContentLoaded', initAuth);

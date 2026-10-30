@@ -3,35 +3,54 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Zenith - Rooms</title>
+    <title>Zenith — Focus Rooms & Digital Workspaces</title>
     <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
 
     <!-- Navbar -->
-    <nav class="navbar">
-        <div class="nav-brand">
-            <span class="brand-icon">◈</span>
-            <span class="brand-text">Zenith</span>
-        </div>
-        <ul class="nav-links">
+    <nav class="navbar" id="mainNavbar">
+        <a href="index.html" class="nav-brand" aria-label="Zenith Home">
+            <svg class="brand-logo-svg" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M14 2L25 8.5V19.5L14 26L3 19.5V8.5L14 2Z" stroke="rgba(255,255,255,0.2)" stroke-width="1.2"/>
+                <path d="M14 6L21.5 10.5V17.5L14 22L6.5 17.5V10.5L14 6Z" stroke="url(#zenithGrad)" stroke-width="1.5"/>
+                <circle cx="14" cy="14" r="2.5" fill="#AA88FF"/>
+                <defs>
+                    <linearGradient id="zenithGrad" x1="6.5" y1="6" x2="21.5" y2="22" gradientUnits="userSpaceOnUse">
+                        <stop stop-color="#AA88FF"/>
+                        <stop offset="1" stop-color="#6E54D8"/>
+                    </linearGradient>
+                </defs>
+            </svg>
+            <span class="brand-name">Zenith</span>
+            <span class="brand-badge">Rooms</span>
+        </a>
+
+        <ul class="nav-links" id="navLinks">
             <li><a href="index.html">Home</a></li>
             <li><a href="rooms.html" class="active">Rooms</a></li>
+            <li><a href="index.html#features">Features</a></li>
             <li><a href="index.html#about">About</a></li>
             <li><a href="index.html#contact">Contact</a></li>
         </ul>
+
         <div class="nav-actions">
-            <button class="exp-btn" onclick="openModal('expModal'); renderExp();">
+            <button class="exp-btn" onclick="openModal('expModal'); renderExp();" aria-label="Open My Experience Stats">
                 <span class="exp-icon">⚡</span>
                 <span>My Exp</span>
             </button>
-            <button class="lb-nav-btn" onclick="openModal('leaderboardModal'); renderLeaderboard();">
+            <button class="lb-nav-btn" onclick="openModal('leaderboardModal'); renderLeaderboard();" aria-label="Open Leaderboard">
                 <span class="lb-icon">🏆</span>
                 <span>Leaderboard</span>
             </button>
             <button class="login-btn" id="authButton" onclick="handleAuthButton()">Login</button>
+            <button class="mobile-nav-toggle" id="mobileMenuBtn" aria-label="Toggle navigation" onclick="toggleMobileMenu()">
+                <span>☰</span>
+            </button>
         </div>
     </nav>
 
@@ -39,29 +58,179 @@
     <main class="rooms-page">
         <div class="rooms-container">
 
-            <h1 class="rooms-title">Join Your Room</h1>
-            <p class="rooms-subtitle">Choose your focus space and start your session</p>
+            <div class="rooms-header-block">
+                <div class="section-kicker">COMMUNITY WORKSPACES</div>
+                <h1 class="rooms-title">Enter Your Focus Space</h1>
+                <p class="rooms-subtitle">Choose a public deep work room, declare your intention, or join a private group room with friends.</p>
+            </div>
 
-            <!-- Category Cards -->
-            <div class="category-cards">
-                <div class="category-card" onclick="openFocusRoom('Meditation')">
-                    <div class="cat-icon">🧘</div>
-                    <h4>Meditation</h4>
-                    <p>Practice mindfulness & calm</p>
-                    <span class="cat-tag">Focus</span>
+            <!-- Discovery Filter Bar -->
+            <div class="rooms-filter-bar">
+                <div class="search-box-wrap">
+                    <span class="search-icon">🔍</span>
+                    <input type="text" id="roomSearchInput" class="search-input" placeholder="Search rooms by name, topic, or tag..." oninput="filterRooms()">
                 </div>
-                <div class="category-card" onclick="openFocusRoom('Study')">
-                    <div class="cat-icon">📚</div>
-                    <h4>Study</h4>
-                    <p>Deep focus for learning</p>
-                    <span class="cat-tag">Focus</span>
+
+                <div class="category-filter-pills" id="categoryFilters">
+                    <button class="filter-pill active" onclick="setCategoryFilter('all', this)">All Spaces</button>
+                    <button class="filter-pill" onclick="setCategoryFilter('Study', this)">Study</button>
+                    <button class="filter-pill" onclick="setCategoryFilter('Meditation', this)">Meditation</button>
+                    <button class="filter-pill" onclick="setCategoryFilter('Coding', this)">Coding</button>
+                    <button class="filter-pill" onclick="setCategoryFilter('Productivity', this)">Productivity</button>
+                    <button class="filter-pill" onclick="setCategoryFilter('Fitness', this)">Fitness</button>
+                    <button class="filter-pill" onclick="setCategoryFilter('Music', this)">Music</button>
+                    <button class="filter-pill" onclick="setCategoryFilter('Discussion', this)">Discussion</button>
                 </div>
-                <div class="category-card" onclick="openJoinModal()">
-                    <div class="cat-icon">🔗</div>
-                    <h4>Join Friend</h4>
-                    <p>Enter a room ID to focus together</p>
-                    <span class="cat-tag">Social</span>
+
+                <div class="rooms-quick-actions">
+                    <button class="quick-action-btn" onclick="openJoinModal()">
+                        <span>🔗</span>
+                        <span>Join with Code</span>
+                    </button>
+                    <button class="quick-action-btn" onclick="openCustomRoomModal()">
+                        <span>+</span>
+                        <span>Custom Space</span>
+                    </button>
                 </div>
+            </div>
+
+            <!-- Category & Room Cards Grid -->
+            <div class="category-cards" id="roomsGrid">
+
+                <!-- 1. Meditation Room -->
+                <div class="category-card" data-category="Meditation" onclick="openFocusRoom('Meditation', 'Mindful Breathwork & Quiet Meditation', 30)">
+                    <div class="card-top-bar">
+                        <div class="cat-icon-wrap">🧘</div>
+                        <div class="live-users-pill">6/10 Active</div>
+                    </div>
+                    <h4>Meditation & Calm</h4>
+                    <p>Practice quiet breathwork, mindfulness, and mental reset with calm focus partners.</p>
+                    <div class="card-bottom-bar">
+                        <span class="cat-tag">Meditation</span>
+                        <span class="card-action-label">Enter Room →</span>
+                    </div>
+                </div>
+
+                <!-- 2. Study Room -->
+                <div class="category-card" data-category="Study" onclick="openFocusRoom('Study', 'Deep Focus Study & Research', 60)">
+                    <div class="card-top-bar">
+                        <div class="cat-icon-wrap">📚</div>
+                        <div class="live-users-pill">8/10 Active</div>
+                    </div>
+                    <h4>Deep Study & Research</h4>
+                    <p>Rigorous, distraction-free study blocks. Ideal for university exams, thesis work, and reading.</p>
+                    <div class="card-bottom-bar">
+                        <span class="cat-tag">Study</span>
+                        <span class="card-action-label">Enter Room →</span>
+                    </div>
+                </div>
+
+                <!-- 3. Coding Sprint -->
+                <div class="category-card" data-category="Coding" onclick="openFocusRoom('Coding', 'Algorithms, Building & Open Source', 60)">
+                    <div class="card-top-bar">
+                        <div class="cat-icon-wrap">💻</div>
+                        <div class="live-users-pill">5/10 Active</div>
+                    </div>
+                    <h4>Night Coding Sprint</h4>
+                    <p>Locked-in programming sessions. Solve LeetCode, ship features, or debug code silently.</p>
+                    <div class="card-bottom-bar">
+                        <span class="cat-tag">Coding</span>
+                        <span class="card-action-label">Enter Room →</span>
+                    </div>
+                </div>
+
+                <!-- 4. Academic Writing & Productivity -->
+                <div class="category-card" data-category="Productivity" onclick="openFocusRoom('Productivity', 'Writing, Planning & Deep Execution', 60)">
+                    <div class="card-top-bar">
+                        <div class="cat-icon-wrap">✍️</div>
+                        <div class="live-users-pill">4/10 Active</div>
+                    </div>
+                    <h4>Deep Writing & Strategy</h4>
+                    <p>Structured flow for authors, researchers, and creators drafting proposals or essays.</p>
+                    <div class="card-bottom-bar">
+                        <span class="cat-tag">Productivity</span>
+                        <span class="card-action-label">Enter Room →</span>
+                    </div>
+                </div>
+
+                <!-- 5. Movement & Fitness -->
+                <div class="category-card" data-category="Fitness" onclick="openFocusRoom('Fitness', 'Desk Mobility, Stretch & Yoga', 30)">
+                    <div class="card-top-bar">
+                        <div class="cat-icon-wrap">⚡</div>
+                        <div class="live-users-pill">3/10 Active</div>
+                    </div>
+                    <h4>Movement & Desk Fitness</h4>
+                    <p>Desk stretching, bodyweight workout, or yoga reset to keep physical energy high.</p>
+                    <div class="card-bottom-bar">
+                        <span class="cat-tag">Fitness</span>
+                        <span class="card-action-label">Enter Room →</span>
+                    </div>
+                </div>
+
+                <!-- 6. Ambient Music & Audio Flow -->
+                <div class="category-card" data-category="Music" onclick="openFocusRoom('Music', 'Music Production & Creative Flow', 60)">
+                    <div class="card-top-bar">
+                        <div class="cat-icon-wrap">🎧</div>
+                        <div class="live-users-pill">4/10 Active</div>
+                    </div>
+                    <h4>Music Production & Audio Flow</h4>
+                    <p>Creative studio space for music makers, beat producers, and audio engineers.</p>
+                    <div class="card-bottom-bar">
+                        <span class="cat-tag">Music</span>
+                        <span class="card-action-label">Enter Room →</span>
+                    </div>
+                </div>
+
+                <!-- 7. Architecture & Discussion -->
+                <div class="category-card" data-category="Discussion" onclick="openFocusRoom('Discussion', 'Systems Thinking & Collaborative Planning', 45)">
+                    <div class="card-top-bar">
+                        <div class="cat-icon-wrap">💬</div>
+                        <div class="live-users-pill">2/10 Active</div>
+                    </div>
+                    <h4>Systems Architecture</h4>
+                    <p>Quiet co-working for systems designers, product engineers, and technical planners.</p>
+                    <div class="card-bottom-bar">
+                        <span class="cat-tag">Discussion</span>
+                        <span class="card-action-label">Enter Room →</span>
+                    </div>
+                </div>
+
+                <!-- 8. Mathematics & Proofs -->
+                <div class="category-card" data-category="Study" onclick="openFocusRoom('Study', 'Advanced Mathematics & Problem Sets', 90)">
+                    <div class="card-top-bar">
+                        <div class="cat-icon-wrap">📐</div>
+                        <div class="live-users-pill">5/10 Active</div>
+                    </div>
+                    <h4>Mathematics & Problem Solving</h4>
+                    <p>90-minute sustained focus blocks for advanced mathematics, physics, and proofs.</p>
+                    <div class="card-bottom-bar">
+                        <span class="cat-tag">Study</span>
+                        <span class="card-action-label">Enter Room →</span>
+                    </div>
+                </div>
+
+                <!-- 9. Join Friend Social Card -->
+                <div class="category-card" data-category="Social" onclick="openJoinModal()" style="border-style:dashed;">
+                    <div class="card-top-bar">
+                        <div class="cat-icon-wrap">🔗</div>
+                        <div class="live-users-pill" style="color:var(--primary-light); background:var(--primary-soft); border-color:var(--border-accent);">Private Room</div>
+                    </div>
+                    <h4>Join with Room Code</h4>
+                    <p>Enter an invite code from a teammate, classmate, or friend to focus together privately.</p>
+                    <div class="card-bottom-bar">
+                        <span class="cat-tag">Social</span>
+                        <span class="card-action-label">Enter Code →</span>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Empty State for Search -->
+            <div id="noRoomsFound" style="display:none; text-align:center; padding:60px 20px;">
+                <div style="font-size:2.4rem; margin-bottom:12px;">🔍</div>
+                <h3 style="font-size:1.3rem; margin-bottom:8px; color:var(--text-primary);">No spaces match your query</h3>
+                <p style="color:var(--text-secondary); max-width:440px; margin:0 auto 20px;">Try searching for a different keyword or create a custom focus room.</p>
+                <button class="submit-btn" onclick="openCustomRoomModal()">Create Custom Room</button>
             </div>
 
         </div>
@@ -71,15 +240,21 @@
     <footer class="footer">
         <div class="footer-content">
             <div class="footer-brand">
-                <span class="brand-icon">◈</span>
+                <svg class="brand-logo-svg" viewBox="0 0 28 28" fill="none" style="width:20px; height:20px;">
+                    <path d="M14 2L25 8.5V19.5L14 26L3 19.5V8.5L14 2Z" stroke="rgba(255,255,255,0.3)" stroke-width="1.2"/>
+                    <circle cx="14" cy="14" r="2.5" fill="#AA88FF"/>
+                </svg>
                 <span>Zenith</span>
             </div>
             <div class="footer-links">
+                <a href="index.html">Home</a>
+                <a href="rooms.html">Rooms</a>
+                <a href="index.html#features">Features</a>
+                <a href="index.html#contact">Contact</a>
                 <a href="#">Privacy</a>
                 <a href="#">Terms</a>
-                <a href="#">Support</a>
             </div>
-            <p class="footer-copy">©️ 2026 Zenith. All rights reserved.</p>
+            <p class="footer-copy">© 2026 Zenith. All rights reserved.</p>
         </div>
     </footer>
 
@@ -88,24 +263,33 @@
     <!-- Login Modal -->
     <div class="modal-overlay" id="loginModal" onclick="closeModal(event, 'loginModal')">
         <div class="modal" onclick="event.stopPropagation()">
-            <button class="modal-close" onclick="closeModal(null, 'loginModal')">×</button>
+            <button class="modal-close" onclick="closeModal(null, 'loginModal')" aria-label="Close modal">×</button>
             <div class="modal-header">
-                <span class="modal-icon">◈</span>
+                <div style="display:flex; justify-content:center; margin-bottom:12px;">
+                    <svg class="brand-logo-svg" viewBox="0 0 28 28" fill="none" style="width:36px; height:36px;">
+                        <path d="M14 2L25 8.5V19.5L14 26L3 19.5V8.5L14 2Z" stroke="rgba(255,255,255,0.2)" stroke-width="1.2"/>
+                        <path d="M14 6L21.5 10.5V17.5L14 22L6.5 17.5V10.5L14 6Z" stroke="#AA88FF" stroke-width="1.5"/>
+                        <circle cx="14" cy="14" r="2.5" fill="#AA88FF"/>
+                    </svg>
+                </div>
                 <h2 id="authTitle">Welcome Back</h2>
-                <p id="authSubtitle">Sign in to your Zenith account</p>
+                <p id="authSubtitle">Sign in to your Zenith workspace</p>
             </div>
-            <form class="login-form" onsubmit="handleLogin(event)">
+            <form class="login-form" onsubmit="handleLogin(event)" style="background:transparent; border:none; padding:0;">
                 <div class="input-group" id="authNameGroup" style="display:none;">
-                    <label for="authFullName">Name</label>
-                    <input type="text" id="authFullName" placeholder="Your name">
+                    <label for="authFullName">Full Name</label>
+                    <input type="text" id="authFullName" placeholder="Your name" autocomplete="name">
                 </div>
                 <div class="input-group">
                     <label for="email">Email</label>
-                    <input type="email" id="email" placeholder="you@example.com" required>
+                    <input type="email" id="email" placeholder="you@example.com" required autocomplete="email">
                 </div>
                 <div class="input-group">
                     <label for="password">Password</label>
-                    <input type="password" id="password" placeholder="••••••••" required>
+                    <div class="password-input-wrap">
+                        <input type="password" id="password" placeholder="••••••••" required autocomplete="current-password">
+                        <button type="button" class="password-toggle-btn" onclick="togglePasswordVisibility(this)" aria-label="Toggle password visibility">👁</button>
+                    </div>
                 </div>
                 <div class="form-options">
                     <label class="remember">
@@ -126,11 +310,11 @@
     <!-- My Exp Modal -->
     <div class="modal-overlay" id="expModal" onclick="closeModal(event, 'expModal')">
         <div class="modal modal-wide" onclick="event.stopPropagation()">
-            <button class="modal-close" onclick="closeModal(null, 'expModal')">×</button>
+            <button class="modal-close" onclick="closeModal(null, 'expModal')" aria-label="Close modal">×</button>
             <div class="modal-header">
-                <span class="modal-icon">⚡</span>
+                <div class="modal-icon">⚡</div>
                 <h2>My Experience</h2>
-                <p>Your focus journey stats</p>
+                <p>Track your verifiable deep work journey and streaks</p>
             </div>
             <div class="exp-stats">
                 <div class="stat-card">
@@ -163,11 +347,11 @@
     <!-- Leaderboard Modal -->
     <div class="modal-overlay" id="leaderboardModal" onclick="closeModal(event, 'leaderboardModal')">
         <div class="modal modal-wide" onclick="event.stopPropagation()">
-            <button class="modal-close" onclick="closeModal(null, 'leaderboardModal')">×</button>
+            <button class="modal-close" onclick="closeModal(null, 'leaderboardModal')" aria-label="Close modal">×</button>
             <div class="modal-header">
-                <span class="modal-icon">🏆</span>
-                <h2>Leaderboard</h2>
-                <p>Top focus warriors by real time spent</p>
+                <div class="modal-icon">🏆</div>
+                <h2>Global Leaderboard</h2>
+                <p>Top focus warriors by real time spent in sessions</p>
             </div>
             <div class="leaderboard-table" id="leaderboardTable">
                 <div class="lb-row lb-header">
@@ -180,63 +364,63 @@
         </div>
     </div>
 
-    <!-- Focus Room Modal -->
+    <!-- Focus Room Config Modal -->
     <div class="modal-overlay" id="focusRoomModal" onclick="closeModal(event, 'focusRoomModal')">
         <div class="modal modal-room" onclick="event.stopPropagation()">
-            <button class="modal-close" onclick="closeModal(null, 'focusRoomModal')">×</button>
+            <button class="modal-close" onclick="closeModal(null, 'focusRoomModal')" aria-label="Close modal">×</button>
             <div class="modal-header">
-                <span class="modal-icon">🎯</span>
+                <div class="modal-icon">🎯</div>
                 <h2 id="roomModalTitle">Enter Focus Room</h2>
-                <p>Configure your session</p>
+                <p>Configure your session and accountability preferences</p>
             </div>
-            <form class="room-form" onsubmit="enterSession(event)">
+            <form class="room-form" onsubmit="enterSession(event)" style="background:transparent; border:none; padding:0;">
                 <div class="input-group">
-                    <label for="roomName">Name</label>
-                    <input type="text" id="roomName" placeholder="Your display name" required>
+                    <label for="roomName">Your Display Name</label>
+                    <input type="text" id="roomName" placeholder="e.g. Alex" required autocomplete="name">
                 </div>
                 <div class="input-group">
-                    <label for="roomGoal">Goal</label>
-                    <input type="text" id="roomGoal" placeholder="What do you want to achieve?" required>
+                    <label for="roomGoal">Specific Session Goal</label>
+                    <input type="text" id="roomGoal" placeholder="What will you finish during this block?" required>
                 </div>
                 <div class="input-group">
                     <label>Duration</label>
                     <div class="duration-options">
                         <label class="dur-option">
-                            <input type="radio" name="duration" value="30" checked>
-                            <span>30 min</span>
+                            <input type="radio" name="duration" value="30">
+                            <span>30m</span>
                         </label>
                         <label class="dur-option">
-                            <input type="radio" name="duration" value="60">
-                            <span>60 min</span>
+                            <input type="radio" name="duration" value="60" checked>
+                            <span>60m</span>
+                        </label>
+                        <label class="dur-option">
+                            <input type="radio" name="duration" value="90">
+                            <span>90m</span>
                         </label>
                         <label class="dur-option">
                             <input type="radio" name="duration" value="120">
-                            <span>120 min</span>
-                        </label>
-                        <label class="dur-option">
-                            <input type="radio" name="duration" value="custom">
-                            <span>Custom</span>
+                            <span>120m</span>
                         </label>
                     </div>
                 </div>
                 <div class="input-group">
-                    <label>Camera Mode</label>
+                    <label>Accountability Camera Mode</label>
                     <div class="camera-mode-options">
-                        <label class="cam-option cam-option-on">
+                        <label class="cam-option cam-option-on selected">
                             <input type="radio" name="cameraMode" value="on" checked>
                             <span class="cam-icon">📹</span>
                             <span class="cam-label">With Camera</span>
-                            <span class="cam-desc">Focus Cam enabled — required</span>
+                            <span class="cam-desc">Focus Cam on (Recommended)</span>
                         </label>
                         <label class="cam-option cam-option-off">
                             <input type="radio" name="cameraMode" value="off">
                             <span class="cam-icon">🚫</span>
                             <span class="cam-label">No Camera</span>
-                            <span class="cam-desc">Audio-only, no video feed</span>
+                            <span class="cam-desc">Audio/Presence only</span>
                         </label>
                     </div>
                 </div>
-                <button type="submit" class="submit-btn enter-session-btn">Enter Session</button>
+                <button type="submit" class="submit-btn enter-session-btn" style="width:100%; margin-top:8px;">Enter Session</button>
             </form>
         </div>
     </div>
@@ -244,45 +428,75 @@
     <!-- Join Friend Modal -->
     <div class="modal-overlay" id="joinModal" onclick="closeModal(event, 'joinModal')">
         <div class="modal modal-room" onclick="event.stopPropagation()">
-            <button class="modal-close" onclick="closeModal(null, 'joinModal')">×</button>
+            <button class="modal-close" onclick="closeModal(null, 'joinModal')" aria-label="Close modal">×</button>
             <div class="modal-header">
-                <span class="modal-icon">🔗</span>
-                <h2>Join a Friend</h2>
-                <p>Enter the room ID to focus together in real time</p>
+                <div class="modal-icon">🔗</div>
+                <h2>Join a Private Room</h2>
+                <p>Enter the 6-character room code to join your team</p>
             </div>
-            <form class="room-form" onsubmit="joinFriendSession(event)">
+            <form class="room-form" onsubmit="joinFriendSession(event)" style="background:transparent; border:none; padding:0;">
                 <div class="input-group">
                     <label for="joinName">Your Name</label>
-                    <input type="text" id="joinName" placeholder="Your display name" required>
+                    <input type="text" id="joinName" placeholder="Your display name" required autocomplete="name">
                 </div>
                 <div class="input-group">
-                    <label for="joinCode">Room ID</label>
-                    <input type="text" id="joinCode" placeholder="e.g. ZEN-AB12" required style="text-transform:uppercase;">
+                    <label for="joinCode">Room Code</label>
+                    <input type="text" id="joinCode" placeholder="e.g. ZEN-F802" required style="text-transform:uppercase; letter-spacing:0.1em; font-family:'JetBrains Mono', monospace;">
                 </div>
-                <button type="submit" class="submit-btn enter-session-btn">Join Room</button>
+                <button type="submit" class="submit-btn enter-session-btn" style="width:100%; margin-top:8px;">Join Room</button>
             </form>
         </div>
     </div>
 
+    <!-- Scripts -->
+    <script src="canvas-particles.js"></script>
     <script src="auth.js"></script>
     <script>
-        let currentRoomType = '';
+        let currentRoomType = 'Study';
+        let currentFilter = 'all';
 
         function openModal(id) {
-            document.getElementById(id).classList.add('active');
-            document.body.style.overflow = 'hidden';
-        }
-
-        function closeModal(event, id) {
-            if (!event || event.target === document.getElementById(id) || event.target.classList.contains('modal-close')) {
-                document.getElementById(id).classList.remove('active');
-                document.body.style.overflow = '';
+            const el = document.getElementById(id);
+            if (el) {
+                el.classList.add('active');
+                document.body.style.overflow = 'hidden';
             }
         }
 
-        function openFocusRoom(roomType) {
+        function closeModal(event, id) {
+            if (!event || event.target === document.getElementById(id) || (event.target && event.target.classList && event.target.classList.contains('modal-close'))) {
+                const el = document.getElementById(id);
+                if (el) {
+                    el.classList.remove('active');
+                    document.body.style.overflow = '';
+                }
+            }
+        }
+
+        function toggleMobileMenu() {
+            const navLinks = document.getElementById('navLinks');
+            if (navLinks) {
+                navLinks.classList.toggle('mobile-open');
+            }
+        }
+
+        function openFocusRoom(roomType, defaultGoal, defaultDuration) {
             currentRoomType = roomType;
             document.getElementById('roomModalTitle').textContent = roomType + ' — Focus Room';
+            if (defaultGoal) {
+                document.getElementById('roomGoal').value = defaultGoal;
+            }
+            if (defaultDuration) {
+                const durRadio = document.querySelector(`input[name="duration"][value="${defaultDuration}"]`);
+                if (durRadio) durRadio.checked = true;
+            }
+            openModal('focusRoomModal');
+        }
+
+        function openCustomRoomModal() {
+            currentRoomType = 'Custom';
+            document.getElementById('roomModalTitle').textContent = 'Create Custom Focus Room';
+            document.getElementById('roomGoal').value = '';
             openModal('focusRoomModal');
         }
 
@@ -292,8 +506,8 @@
 
         function enterSession(event) {
             event.preventDefault();
-            const name = document.getElementById('roomName').value;
-            const goal = document.getElementById('roomGoal').value;
+            const name = document.getElementById('roomName').value.trim();
+            const goal = document.getElementById('roomGoal').value.trim();
             const duration = document.querySelector('input[name="duration"]:checked').value;
             const cameraMode = document.querySelector('input[name="cameraMode"]:checked').value;
             const roomCode = 'ZEN-' + Math.random().toString(36).substr(2, 4).toUpperCase();
@@ -311,17 +525,52 @@
 
         function joinFriendSession(event) {
             event.preventDefault();
-            const name = document.getElementById('joinName').value;
-            const code = document.getElementById('joinCode').value.toUpperCase();
+            const name = document.getElementById('joinName').value.trim();
+            const code = document.getElementById('joinCode').value.trim().toUpperCase();
             const config = {
                 name: name,
                 goal: 'Group Focus Session',
                 type: 'Friend',
                 duration: 60,
-                cam: 'off' // Joiners can decide to turn it on later
+                cam: 'off'
             };
             sessionStorage.setItem('zenith_session_config', JSON.stringify(config));
             window.location.href = 'session.html?room=' + code;
+        }
+
+        // ===== SEARCH & CATEGORY FILTERING =====
+        function setCategoryFilter(category, buttonEl) {
+            currentFilter = category;
+            document.querySelectorAll('#categoryFilters .filter-pill').forEach(btn => btn.classList.remove('active'));
+            if (buttonEl) buttonEl.classList.add('active');
+            filterRooms();
+        }
+
+        function filterRooms() {
+            const query = (document.getElementById('roomSearchInput').value || '').toLowerCase().trim();
+            const cards = document.querySelectorAll('#roomsGrid .category-card');
+            let visibleCount = 0;
+
+            cards.forEach(card => {
+                const cat = card.getAttribute('data-category');
+                const title = (card.querySelector('h4') ? card.querySelector('h4').textContent : '').toLowerCase();
+                const desc = (card.querySelector('p') ? card.querySelector('p').textContent : '').toLowerCase();
+
+                const matchesCat = currentFilter === 'all' || cat.toLowerCase() === currentFilter.toLowerCase();
+                const matchesQuery = !query || title.includes(query) || desc.includes(query) || cat.toLowerCase().includes(query);
+
+                if (matchesCat && matchesQuery) {
+                    card.style.display = 'flex';
+                    visibleCount++;
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+
+            const noFound = document.getElementById('noRoomsFound');
+            if (noFound) {
+                noFound.style.display = visibleCount === 0 ? 'block' : 'none';
+            }
         }
 
         // ===== REAL-TIME EXP RENDERING =====
@@ -362,7 +611,7 @@
 
             const lb = JSON.parse(localStorage.getItem('zenith_leaderboard') || '[]');
             if (lb.length === 0) {
-                html += `<div class="lb-row"><span style="color:var(--text-muted); text-align:center; grid-column:1/-1; padding:20px;">No sessions yet. Start focusing to appear here!</span></div>`;
+                html += `<div class="lb-row" style="grid-column:1/-1; justify-content:center;"><span style="color:var(--text-muted); padding:20px;">No recorded sessions yet. Start focusing to lead!</span></div>`;
             } else {
                 lb.slice(0, 10).forEach((entry, i) => {
                     const rank = i + 1;
@@ -410,16 +659,19 @@
             }
         });
 
-        // Handle joining from a shared link
-        window.onload = function() {
+        // Handle joining from a shared link or action trigger
+        window.addEventListener('DOMContentLoaded', function() {
             const urlParams = new URLSearchParams(window.location.search);
             const joinCode = urlParams.get('join');
+            const action = urlParams.get('action');
+
             if (joinCode) {
                 document.getElementById('joinCode').value = joinCode;
                 openJoinModal();
+            } else if (action === 'new') {
+                openCustomRoomModal();
             }
-        };
+        });
     </script>
-
 </body>
 </html>
