@@ -4,11 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Zenith — Sign In</title>
+    <!-- Anti-Flash Global Theme Script -->
+    <script>
+        (function(){try{const t=localStorage.getItem('zenith-theme')||(window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
+    </script>
     <link rel="stylesheet" href="style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="theme.js"></script>
 </head>
 <body>
 
@@ -16,25 +21,46 @@
         <!-- Editorial Side Panel (Architectural) -->
         <aside class="auth-panel-editorial">
             <div class="auth-brand">
-                <a href="index.html" style="color:var(--text-light); text-decoration:none;">ZENITH</a>
+                <a href="index.html" class="nav-brand zenith-brand-logo" aria-label="Zenith Home">
+                    <svg class="zenith-symbol-svg" viewBox="0 0 26 26" width="22" height="22" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                        <path d="M4 14.5 A9 9 0 0 1 22 14.5 Z" fill="currentColor"/>
+                        <rect x="1" y="17" width="24" height="2" rx="0.5" fill="currentColor"/>
+                    </svg>
+                    <span class="zenith-wordmark">ZENITH</span>
+                </a>
             </div>
 
             <div class="auth-editorial-content">
-                <div class="section-tag" style="color:var(--text-light-muted); margin-bottom:16px;">WORKSPACE ACCESS</div>
+                <div class="section-tag" style="margin-bottom:16px;">WORKSPACE ACCESS</div>
                 <h1>Find your focus.<br>Return to flow.</h1>
                 <p>Zenith connects focused students, researchers, and builders in structured accountability rooms.</p>
             </div>
 
-            <div style="font-family:var(--font-mono); font-size:0.75rem; color:var(--text-light-muted);">
+            <div style="font-family:var(--font-mono); font-size:0.75rem; color:var(--text-muted);">
                 © 2026 ZENITH ARCHITECTURE
             </div>
         </aside>
 
         <!-- Form Side Panel -->
         <main class="auth-panel-form">
-            <div style="margin-bottom:28px;">
+            <div class="auth-top-nav">
                 <a href="index.html" style="font-size:0.84rem; font-weight:600; color:var(--text-secondary); display:inline-flex; align-items:center; gap:6px;">
                     ← Back to Home
+                </a>
+                <button type="button" class="theme-toggle-btn" onclick="toggleZenithTheme()" aria-label="Toggle dark mode" title="Toggle theme">
+                    <svg class="theme-icon-moon" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+                    <svg class="theme-icon-sun" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="display:none;"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+                    <span class="theme-toggle-label">Dark</span>
+                </button>
+            </div>
+
+            <div class="auth-mobile-header">
+                <a href="index.html" class="nav-brand zenith-brand-logo" aria-label="Zenith Home">
+                    <svg class="zenith-symbol-svg" viewBox="0 0 26 26" width="22" height="22" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                        <path d="M4 14.5 A9 9 0 0 1 22 14.5 Z" fill="currentColor"/>
+                        <rect x="1" y="17" width="24" height="2" rx="0.5" fill="currentColor"/>
+                    </svg>
+                    <span class="zenith-wordmark">ZENITH</span>
                 </a>
             </div>
 

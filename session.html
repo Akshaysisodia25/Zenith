@@ -4,19 +4,24 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Zenith — Focus Workspace</title>
+    <!-- Anti-Flash Global Theme Script -->
+    <script>
+        (function(){try{const t=localStorage.getItem('zenith-theme')||(window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
+    </script>
     <link rel="stylesheet" href="style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="theme.js"></script>
 </head>
 <body class="session-workspace-body">
 
     <!-- Camera Denied Overlay -->
     <div class="modal-overlay" id="camDeniedOverlay" style="display:none; z-index:9999;">
-        <div class="modal" style="background:var(--bg-dark-surface); color:var(--text-light); border-color:var(--border-dark); text-align:center;">
-            <h2 id="camDeniedTitle" style="color:var(--text-light); margin-bottom:8px;">Camera Permission Required</h2>
-            <p id="camDeniedMsg" style="color:var(--text-light-muted); margin-bottom:24px;">Focus Cam is required for this room to maintain shared accountability.</p>
+        <div class="modal" style="text-align:center;">
+            <h2 id="camDeniedTitle" style="color:var(--text); margin-bottom:8px;">Camera Permission Required</h2>
+            <p id="camDeniedMsg" style="color:var(--text-secondary); margin-bottom:24px;">Focus Cam is required for this room to maintain shared accountability.</p>
             <div style="display:flex; gap:10px; justify-content:center;">
                 <button class="stage-btn" onclick="window.location.href='rooms.html'">← Choose Room</button>
                 <button class="stage-btn primary" onclick="continueWithoutCamera()">Continue Audio-Only</button>
@@ -29,21 +34,27 @@
         <div class="tab-warning-card">
             <h2 style="margin-bottom:8px;">Focus Interrupted</h2>
             <p>You left the workspace tab. Session timer is paused to preserve accurate focus metrics.</p>
-            <button class="primary-btn" onclick="returnToFocus()" style="background:var(--text-light); color:var(--bg-dark);">Return to Focus</button>
+            <button class="primary-btn" onclick="returnToFocus()" style="background:var(--text); color:var(--bg);">Return to Focus</button>
         </div>
     </div>
 
     <!-- Architectural HUD Header -->
     <header class="session-hud-header">
         <div class="session-hud-left">
-            <a href="rooms.html" class="session-hud-brand">ZENITH</a>
+            <a href="rooms.html" class="nav-brand zenith-brand-logo session-hud-brand" aria-label="Zenith Rooms">
+                <svg class="zenith-symbol-svg" viewBox="0 0 26 26" width="20" height="20" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                    <path d="M4 14.5 A9 9 0 0 1 22 14.5 Z" fill="currentColor"/>
+                    <rect x="1" y="17" width="24" height="2" rx="0.5" fill="currentColor"/>
+                </svg>
+                <span class="zenith-wordmark" style="font-size:1rem;">ZENITH</span>
+            </a>
             <span class="session-hud-badge" id="sessionType">STUDY</span>
-            <span style="font-size:0.95rem; font-weight:600; color:var(--text-light);" id="sessionGoal">Deep Focus Session</span>
+            <span style="font-size:0.95rem; font-weight:600; color:var(--text);" id="sessionGoal">Deep Focus Session</span>
         </div>
 
         <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
-            <span style="font-size:0.8rem; color:var(--text-light-muted); font-family:var(--font-mono);">
-                PARTNER: <strong id="sessionName" style="color:var(--text-light);">You</strong>
+            <span style="font-size:0.8rem; color:var(--text-muted); font-family:var(--font-mono);">
+                PARTNER: <strong id="sessionName" style="color:var(--text);">You</strong>
             </span>
             <span id="roomCodeWrap" style="display:none;">
                 <button class="room-copy-btn" onclick="copyRoomCode()" title="Click to copy invite link">
@@ -53,7 +64,13 @@
             <button class="stage-btn" id="videoToggle" onclick="toggleVideo()" style="padding:6px 14px; font-size:0.78rem;">
                 <span id="videoToggleText">Turn On Camera</span>
             </button>
-            <button class="stage-btn" onclick="leaveSession()" style="padding:6px 14px; font-size:0.78rem; border-color:rgba(220,38,38,0.4); color:#FCA5A5;">
+            <!-- Global Theme Toggle -->
+            <button type="button" class="theme-toggle-btn" onclick="toggleZenithTheme()" aria-label="Toggle dark mode" title="Toggle theme">
+                <svg class="theme-icon-moon" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+                <svg class="theme-icon-sun" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="display:none;"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+                <span class="theme-toggle-label">Dark</span>
+            </button>
+            <button class="stage-btn" onclick="leaveSession()" style="padding:6px 14px; font-size:0.78rem; border-color:rgba(220,38,38,0.4); color:#DC2626;">
                 Leave Space
             </button>
         </div>
@@ -110,7 +127,7 @@
                 <span id="elapsedTime">Elapsed: 0:00</span>
             </div>
             <div>
-                <span id="liveXP" style="color:var(--text-light); font-weight:700;">+0 XP</span>
+                <span id="liveXP" style="color:var(--text); font-weight:700;">+0 XP</span>
             </div>
         </footer>
 
@@ -118,9 +135,9 @@
 
     <!-- Leave Session Confirmation Modal -->
     <div class="modal-overlay" id="leaveModal" onclick="closeLeaveModal()">
-        <div class="modal" onclick="event.stopPropagation()" style="background:var(--bg-dark-surface); color:var(--text-light); border-color:var(--border-dark); max-width:400px; text-align:center;">
-            <h2 style="color:var(--text-light); margin-bottom:8px;">Leave Focus Space?</h2>
-            <p style="color:var(--text-light-muted); margin-bottom:24px;">Your progress, elapsed focus time, and earned XP will be safely stored.</p>
+        <div class="modal" onclick="event.stopPropagation()" style="max-width:400px; text-align:center;">
+            <h2 style="margin-bottom:8px;">Leave Focus Space?</h2>
+            <p style="color:var(--text-secondary); margin-bottom:24px;">Your progress, elapsed focus time, and earned XP will be safely stored.</p>
             <div style="display:flex; gap:10px;">
                 <button class="stage-btn" onclick="confirmLeave()" style="flex:1; border-color:var(--status-danger); color:var(--status-danger);">Leave Session</button>
                 <button class="stage-btn primary" onclick="closeLeaveModal()" style="flex:1;">Stay Focused</button>

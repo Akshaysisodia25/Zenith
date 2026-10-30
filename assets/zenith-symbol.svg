@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 26 26" width="26" height="26" fill="none">
+  <!-- Minimal geometric Zenith symbol inspired by a horizon/sun -->
+  <path d="M4 14.5 A9 9 0 0 1 22 14.5 Z" fill="currentColor"/>
+  <rect x="1" y="17" width="24" height="2" rx="0.5" fill="currentColor"/>
+</svg>
