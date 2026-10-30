@@ -27,6 +27,14 @@
             } catch (e) {}
         }
         updateToggleButtons(theme);
+        updateFavicon(theme);
+    }
+
+    function updateFavicon(theme) {
+        const svgIcon = document.querySelector('link[rel="icon"][type="image/svg+xml"]');
+        if (svgIcon) {
+            svgIcon.href = theme === 'dark' ? 'assets/favicon-dark.svg?v=2' : 'assets/favicon-light.svg?v=2';
+        }
     }
 
     function updateToggleButtons(theme) {
@@ -82,14 +90,17 @@
         }
     });
 
-    // Synchronize UI button state when DOM is interactive
+    // Synchronize UI button state and favicon when DOM is interactive
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', function () {
             const active = document.documentElement.getAttribute('data-theme') || getInitialTheme();
             updateToggleButtons(active);
+            updateFavicon(active);
         });
     } else {
         const active = document.documentElement.getAttribute('data-theme') || getInitialTheme();
         updateToggleButtons(active);
+        updateFavicon(active);
     }
 })();
+
