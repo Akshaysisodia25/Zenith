@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
@@ -43,42 +43,131 @@
     <!-- Main Editorial Page Content -->
     <main class="home-page">
 
-        <!-- HERO SECTION -->
+        <!-- EDITORIAL HERO SECTION (Typography-First, Abstract Architecture) -->
         <section class="editorial-hero">
             <div class="editorial-container">
-                <div class="hero-grid">
-                    <div class="hero-copy-column">
-                        <div class="section-tag">EDITORIAL WORKSPACE</div>
-                        <h1 class="hero-editorial-title">
-                            Find your focus.<br>
-                            Find your people.
-                        </h1>
-                    </div>
+                
+                <!-- Small Metadata -->
+                <div class="hero-meta-label">01 — ZENITH / SHARED SPACE</div>
 
-                    <div class="hero-support-column">
-                        <p class="hero-editorial-sub">
-                            Zenith is a shared space for focused work, meaningful communities, and better daily routines.
+                <!-- Huge Headline & Description Layout -->
+                <div class="hero-main-layout">
+                    <h1 class="hero-huge-headline">
+                        FIND YOUR<br>
+                        FOCUS.<br>
+                        FIND YOUR<br>
+                        PEOPLE.
+                    </h1>
+
+                    <div class="hero-sub-column">
+                        <p class="hero-editorial-desc">
+                            Zenith is a shared space for people who want to study, work, train, create and grow together.
                         </p>
-                        <div class="hero-cta-group">
+                        
+                        <div class="hero-cta-buttons">
                             <a href="rooms.html" class="primary-btn">
-                                <span>Explore Rooms</span>
+                                <span>EXPLORE ROOMS</span>
                                 <span class="arrow-icon">→</span>
                             </a>
                             <a href="rooms.html?action=new" class="secondary-btn">
-                                <span>Start a Session</span>
+                                <span>START A SESSION</span>
                             </a>
+                        </div>
+
+                        <div class="hero-specs-row">
+                            <div class="hero-spec-item">
+                                <span class="spec-num">10</span>
+                                <span class="spec-label">MAX SEATS</span>
+                            </div>
+                            <div class="hero-spec-item">
+                                <span class="spec-num">60M</span>
+                                <span class="spec-label">FOCUS CYCLE</span>
+                            </div>
+                            <div class="hero-spec-item">
+                                <span class="spec-num">0.02s</span>
+                                <span class="spec-label">MESH SYNC</span>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Hero Monograph Visual Frame -->
-                <div class="hero-visual-frame">
-                    <div class="hero-visual-bar">
-                        <span>WORKSPACE 01 — ARCHITECTURAL FOCUS SPACE</span>
-                        <span>LIVE WEBRTC PROTOCOL</span>
+                <!-- Subtle Brand Geometric Abstract Graphic (Pure SVG/CSS, No Stock Photos) -->
+                <div class="hero-abstract-frame">
+                    <div class="abstract-bar">
+                        <div class="active-indicator">
+                            <span class="status-dot-green"></span>
+                            <span>LIVE WORKSPACE PROTOCOL</span>
+                        </div>
+                        <div>WEBRTC MESH // 8 ACTIVE DISCIPLINE SPACES</div>
                     </div>
-                    <img src="assets/zenith-hero-focus-room.png" alt="Zenith Deep Focus Workspace Interface" loading="eager">
+
+                    <div class="abstract-graphic-body">
+                        <div class="schematic-svg-wrap">
+                            <svg viewBox="0 0 640 220" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:100%; height:auto;">
+                                <!-- Hairline structural grid & axes -->
+                                <line x1="0" y1="110" x2="640" y2="110" stroke="rgba(0,0,0,0.12)" stroke-width="1" stroke-dasharray="3 3"/>
+                                <line x1="320" y1="0" x2="320" y2="220" stroke="rgba(0,0,0,0.12)" stroke-width="1" stroke-dasharray="3 3"/>
+                                
+                                <!-- Concentric architectural focus rings -->
+                                <circle cx="320" cy="110" r="95" stroke="rgba(0,0,0,0.08)" stroke-width="1"/>
+                                <circle cx="320" cy="110" r="65" stroke="rgba(0,0,0,0.15)" stroke-width="1.2"/>
+                                <circle cx="320" cy="110" r="35" stroke="rgba(0,0,0,0.3)" stroke-width="1.4"/>
+                                
+                                <!-- Central faceted Zenith prism -->
+                                <polygon points="320,86 342,110 320,134 298,110" fill="#111111" stroke="#111111" stroke-width="1.2"/>
+                                <circle cx="320" cy="110" r="3" fill="#F5F4F0"/>
+
+                                <!-- Orbiting focus nodes representing 10 participant seats -->
+                                <circle cx="385" cy="110" r="4.5" fill="#111111"/>
+                                <circle cx="255" cy="110" r="4.5" fill="#111111"/>
+                                <circle cx="366" cy="64" r="4.5" fill="#111111"/>
+                                <circle cx="274" cy="156" r="4.5" fill="#111111"/>
+                                <circle cx="274" cy="64" r="4.5" fill="#111111"/>
+                                <circle cx="366" cy="156" r="4.5" fill="#111111"/>
+                                <circle cx="320" cy="45" r="4.5" fill="#111111"/>
+                                <circle cx="320" cy="175" r="4.5" fill="#111111"/>
+
+                                <!-- Textual technical coordinate callouts -->
+                                <text x="328" y="42" font-family="'JetBrains Mono', monospace" font-size="8" fill="#777777" letter-spacing="0.1em">ORBIT A / 30M</text>
+                                <text x="374" y="62" font-family="'JetBrains Mono', monospace" font-size="8" fill="#777777" letter-spacing="0.1em">ORBIT B / 60M</text>
+                                <text x="424" y="106" font-family="'JetBrains Mono', monospace" font-size="8" fill="#777777" letter-spacing="0.1em">FLOW ZONE / 90M</text>
+
+                                <!-- Vector crosshairs at quad corners -->
+                                <path d="M40 30h14M47 23v14" stroke="rgba(0,0,0,0.25)" stroke-width="1"/>
+                                <text x="60" y="33" font-family="'JetBrains Mono', monospace" font-size="8" fill="#777777" letter-spacing="0.08em">NODE_ALPHA: 10 SEATS ACTIVE</text>
+                                
+                                <path d="M600 30h14M607 23v14" stroke="rgba(0,0,0,0.25)" stroke-width="1"/>
+                                <text x="475" y="33" font-family="'JetBrains Mono', monospace" font-size="8" fill="#777777" letter-spacing="0.08em">LATENCY: 0.02s P2P</text>
+
+                                <path d="M40 190h14M47 183v14" stroke="rgba(0,0,0,0.25)" stroke-width="1"/>
+                                <text x="60" y="193" font-family="'JetBrains Mono', monospace" font-size="8" fill="#777777" letter-spacing="0.08em">ANTI-DISTRACTION: ARMED</text>
+
+                                <path d="M600 190h14M607 183v14" stroke="rgba(0,0,0,0.25)" stroke-width="1"/>
+                                <text x="495" y="193" font-family="'JetBrains Mono', monospace" font-size="8" fill="#777777" letter-spacing="0.08em">AUDIO: ZERO NOISE</text>
+                            </svg>
+                        </div>
+                    </div>
+
+                    <div class="abstract-specs-footer">
+                        <div class="abstract-spec-cell">
+                            <div class="cell-title">01 / DISCIPLINE</div>
+                            <div class="cell-val">Structured Focus Cycles</div>
+                        </div>
+                        <div class="abstract-spec-cell">
+                            <div class="cell-title">02 / ACCOUNTABILITY</div>
+                            <div class="cell-val">Silent WebRTC Video Feed</div>
+                        </div>
+                        <div class="abstract-spec-cell">
+                            <div class="cell-title">03 / DISTRACTION SHIELD</div>
+                            <div class="cell-val">Automated Tab-Switch Lock</div>
+                        </div>
+                        <div class="abstract-spec-cell">
+                            <div class="cell-title">04 / VERIFIABLE PROGRESS</div>
+                            <div class="cell-val">Real Time Logged & XP</div>
+                        </div>
+                    </div>
                 </div>
+
             </div>
         </section>
 
@@ -92,97 +181,109 @@
                     </div>
                     <div>
                         <a href="rooms.html" class="secondary-btn">
-                            <span>View All Spaces</span>
+                            <span>VIEW ALL SPACES</span>
                             <span class="arrow-icon">→</span>
                         </a>
                     </div>
                 </div>
 
-                <!-- Room Cards Grid -->
+                <!-- Room Cards Grid with Abstract Architectural Headers -->
                 <div class="editorial-rooms-grid">
                     
                     <!-- Card 1: Deep Work -->
                     <article class="editorial-card" onclick="window.location.href='rooms.html?select=Study'">
-                        <div class="card-media">
-                            <div class="card-media-placeholder">
-                                <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2">
-                                    <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
-                                    <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
-                                </svg>
-                            </div>
-                            <div class="card-media-badge">
+                        <div class="card-media-art">
+                            <div class="art-pattern-grid"></div>
+                            <div class="art-badge">
                                 <span class="status-dot-green"></span>
                                 <span>ACTIVE</span>
                             </div>
+                            <!-- Minimal Architectural Graphic -->
+                            <svg width="120" height="70" viewBox="0 0 120 70" fill="none" style="z-index:1;">
+                                <rect x="10" y="10" width="100" height="50" stroke="#111111" stroke-width="1.2"/>
+                                <line x1="35" y1="10" x2="35" y2="60" stroke="#111111" stroke-width="1"/>
+                                <line x1="60" y1="10" x2="60" y2="60" stroke="#111111" stroke-width="1"/>
+                                <line x1="85" y1="10" x2="85" y2="60" stroke="#111111" stroke-width="1"/>
+                                <circle cx="22.5" cy="35" r="4" fill="#111111"/>
+                                <circle cx="47.5" cy="35" r="4" fill="#111111"/>
+                                <circle cx="72.5" cy="35" r="4" fill="#111111"/>
+                                <circle cx="97.5" cy="35" r="4" fill="#111111"/>
+                            </svg>
                         </div>
                         <div class="card-body">
                             <div class="card-meta-row">
-                                <span>ROOM #01</span>
-                                <span>STUDY</span>
+                                <span>01 / STUDY</span>
+                                <span>60 MIN</span>
                             </div>
-                            <h3 class="card-title">Deep Work & Research</h3>
+                            <h3 class="card-title">DEEP WORK & RESEARCH</h3>
                             <p class="card-desc">A structured, distraction-free environment for sustained reading, university coursework, and thesis preparation.</p>
                             <div class="card-footer">
-                                <span class="card-members">24 Members Active</span>
-                                <span class="card-explore-btn">Enter Space <span class="arrow-icon">→</span></span>
+                                <span class="card-members">24 members active</span>
+                                <span class="card-explore-btn">EXPLORE SPACE <span class="arrow-icon">→</span></span>
                             </div>
                         </div>
                     </article>
 
                     <!-- Card 2: Coding Sprint -->
                     <article class="editorial-card" onclick="window.location.href='rooms.html?select=Coding'">
-                        <div class="card-media">
-                            <div class="card-media-placeholder">
-                                <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2">
-                                    <polyline points="16 18 22 12 16 6"/>
-                                    <polyline points="8 6 2 12 8 18"/>
-                                </svg>
-                            </div>
-                            <div class="card-media-badge">
+                        <div class="card-media-art">
+                            <div class="art-pattern-grid"></div>
+                            <div class="art-badge">
                                 <span class="status-dot-green"></span>
                                 <span>ACTIVE</span>
                             </div>
+                            <!-- Minimal Architectural Graphic -->
+                            <svg width="120" height="70" viewBox="0 0 120 70" fill="none" style="z-index:1;">
+                                <rect x="10" y="10" width="100" height="50" stroke="#111111" stroke-width="1.2"/>
+                                <line x1="10" y1="24" x2="110" y2="24" stroke="#111111" stroke-width="0.8"/>
+                                <polyline points="24,38 32,44 24,50" stroke="#111111" stroke-width="1.4"/>
+                                <line x1="38" y1="50" x2="52" y2="50" stroke="#111111" stroke-width="1.4"/>
+                                <circle cx="18" cy="17" r="2" fill="#111111"/>
+                                <circle cx="25" cy="17" r="2" fill="#111111"/>
+                                <circle cx="32" cy="17" r="2" fill="#111111"/>
+                            </svg>
                         </div>
                         <div class="card-body">
                             <div class="card-meta-row">
-                                <span>ROOM #02</span>
-                                <span>CODING</span>
+                                <span>02 / CODING</span>
+                                <span>60-120 MIN</span>
                             </div>
-                            <h3 class="card-title">Systems & Code Sprint</h3>
+                            <h3 class="card-title">NIGHT CODING SPRINT</h3>
                             <p class="card-desc">Silent co-building for software engineers, algorithmic challenges, and open-source contributions.</p>
                             <div class="card-footer">
-                                <span class="card-members">18 Members Active</span>
-                                <span class="card-explore-btn">Enter Space <span class="arrow-icon">→</span></span>
+                                <span class="card-members">19 members active</span>
+                                <span class="card-explore-btn">EXPLORE SPACE <span class="arrow-icon">→</span></span>
                             </div>
                         </div>
                     </article>
 
                     <!-- Card 3: Meditation & Calm -->
                     <article class="editorial-card" onclick="window.location.href='rooms.html?select=Meditation'">
-                        <div class="card-media">
-                            <div class="card-media-placeholder">
-                                <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2">
-                                    <circle cx="12" cy="12" r="10"/>
-                                    <path d="M8 12s1.5-2 4-2 4 2 4 2"/>
-                                    <line x1="9" y1="9" x2="9.01" y2="9"/>
-                                    <line x1="15" y1="9" x2="15.01" y2="9"/>
-                                </svg>
-                            </div>
-                            <div class="card-media-badge">
+                        <div class="card-media-art">
+                            <div class="art-pattern-grid"></div>
+                            <div class="art-badge">
                                 <span class="status-dot-green"></span>
                                 <span>ACTIVE</span>
                             </div>
+                            <!-- Minimal Architectural Graphic -->
+                            <svg width="120" height="70" viewBox="0 0 120 70" fill="none" style="z-index:1;">
+                                <circle cx="60" cy="35" r="28" stroke="#111111" stroke-width="1" stroke-dasharray="2 2"/>
+                                <circle cx="60" cy="35" r="18" stroke="#111111" stroke-width="1.2"/>
+                                <circle cx="60" cy="35" r="6" fill="#111111"/>
+                                <line x1="15" y1="35" x2="42" y2="35" stroke="#111111" stroke-width="0.8"/>
+                                <line x1="78" y1="35" x2="105" y2="35" stroke="#111111" stroke-width="0.8"/>
+                            </svg>
                         </div>
                         <div class="card-body">
                             <div class="card-meta-row">
-                                <span>ROOM #03</span>
-                                <span>MEDITATION</span>
+                                <span>03 / CALM</span>
+                                <span>30 MIN</span>
                             </div>
-                            <h3 class="card-title">Mindfulness & Breathwork</h3>
+                            <h3 class="card-title">MINDFULNESS & BREATH</h3>
                             <p class="card-desc">Reset mental bandwidth, practice quiet breath exercises, and reset between high-intensity sprints.</p>
                             <div class="card-footer">
-                                <span class="card-members">12 Members Active</span>
-                                <span class="card-explore-btn">Enter Space <span class="arrow-icon">→</span></span>
+                                <span class="card-members">14 members active</span>
+                                <span class="card-explore-btn">EXPLORE SPACE <span class="arrow-icon">→</span></span>
                             </div>
                         </div>
                     </article>
@@ -200,7 +301,7 @@
                         <h2 class="section-heading-large">Work better, together.</h2>
                     </div>
                     <p class="section-lead-copy">
-                        Real-time peer presence without the distraction of chat. Check into ongoing accountability blocks or book upcoming deep work slots.
+                        Real-time peer presence without the distraction of chat. Check into ongoing accountability blocks or start a private session.
                     </p>
                 </div>
 
@@ -219,7 +320,7 @@
                             <span>8 / 10 PARTNERS</span>
                         </div>
                         <div class="strip-action">
-                            <a href="rooms.html?select=Study">Join Block <span class="arrow-icon">→</span></a>
+                            <a href="rooms.html?select=Study">JOIN BLOCK <span class="arrow-icon">→</span></a>
                         </div>
                     </div>
 
@@ -235,7 +336,7 @@
                             <span>5 / 10 PARTNERS</span>
                         </div>
                         <div class="strip-action">
-                            <a href="rooms.html?select=Coding">Join Block <span class="arrow-icon">→</span></a>
+                            <a href="rooms.html?select=Coding">JOIN BLOCK <span class="arrow-icon">→</span></a>
                         </div>
                     </div>
 
@@ -251,7 +352,7 @@
                             <span>6 / 10 PARTNERS</span>
                         </div>
                         <div class="strip-action">
-                            <a href="rooms.html?select=Meditation">Join Block <span class="arrow-icon">→</span></a>
+                            <a href="rooms.html?select=Meditation">JOIN BLOCK <span class="arrow-icon">→</span></a>
                         </div>
                     </div>
 
@@ -267,7 +368,7 @@
                             <span>4 / 10 PARTNERS</span>
                         </div>
                         <div class="strip-action">
-                            <a href="rooms.html?select=Productivity">Join Block <span class="arrow-icon">→</span></a>
+                            <a href="rooms.html?select=Productivity">JOIN BLOCK <span class="arrow-icon">→</span></a>
                         </div>
                     </div>
 
@@ -275,41 +376,13 @@
             </div>
         </section>
 
-        <!-- 03 — HOW ZENITH WORKS -->
+        <!-- 03 — COMMUNITY -->
         <section class="editorial-section" id="about">
-            <div class="editorial-container">
-                <div class="section-tag">03 — METHODOLOGY</div>
-                <h2 class="section-heading-large" style="margin-bottom:48px;">How Zenith Works</h2>
-
-                <div class="how-it-works-grid">
-                    <div class="step-panel">
-                        <div class="step-digit">01 / DISCOVER</div>
-                        <h3 class="step-title">Discover</h3>
-                        <p class="step-body">Find communities, dedicated focus rooms, and scheduled blocks that align with your field and working style.</p>
-                    </div>
-
-                    <div class="step-panel">
-                        <div class="step-digit">02 / JOIN</div>
-                        <h3 class="step-title">Join</h3>
-                        <p class="step-body">Enter a space, define your specific goal for the session, and set your camera accountability preference.</p>
-                    </div>
-
-                    <div class="step-panel">
-                        <div class="step-digit">03 / FOCUS</div>
-                        <h3 class="step-title">Focus</h3>
-                        <p class="step-body">Work alongside peers through structured countdown cycles, protected by anti-distraction tab shields.</p>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- 04 — COMMUNITY -->
-        <section class="editorial-section">
             <div class="editorial-container">
                 <div class="section-header-row">
                     <div>
-                        <div class="section-tag">04 — COMMUNITY</div>
-                        <h2 class="section-heading-large">A discipline for every craft.</h2>
+                        <div class="section-tag">03 — COMMUNITY</div>
+                        <h2 class="section-heading-large">A shared space for every discipline.</h2>
                     </div>
                     <p class="section-lead-copy">
                         Built for people who care about craftsmanship, academic rigor, and continuous self-improvement.
@@ -318,23 +391,23 @@
 
                 <div class="community-cohorts-grid">
                     <div class="cohort-card">
-                        <div class="cohort-label">Students</div>
+                        <div class="cohort-label">STUDENTS</div>
                         <p class="cohort-desc">Preparing for medical, law, and engineering board exams.</p>
                     </div>
                     <div class="cohort-card">
-                        <div class="cohort-label">Creators</div>
+                        <div class="cohort-label">CREATORS</div>
                         <p class="cohort-desc">Drafting scripts, architecture plans, and essays.</p>
                     </div>
                     <div class="cohort-card">
-                        <div class="cohort-label">Developers</div>
+                        <div class="cohort-label">DEVELOPERS</div>
                         <p class="cohort-desc">Shipping production features and solving complex algorithms.</p>
                     </div>
                     <div class="cohort-card">
-                        <div class="cohort-label">Athletes</div>
+                        <div class="cohort-label">ATHLETES</div>
                         <p class="cohort-desc">Maintaining mobility routines, yoga, and breathwork.</p>
                     </div>
                     <div class="cohort-card">
-                        <div class="cohort-label">Learners</div>
+                        <div class="cohort-label">LEARNERS</div>
                         <p class="cohort-desc">Independent researchers mastering new languages and skills.</p>
                     </div>
                 </div>
@@ -350,7 +423,7 @@
                 </div>
                 <div class="cta-right">
                     <a href="rooms.html" class="primary-btn">
-                        <span>Explore Zenith</span>
+                        <span>EXPLORE ZENITH</span>
                         <span class="arrow-icon">→</span>
                     </a>
                 </div>
